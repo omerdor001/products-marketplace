@@ -16,6 +16,12 @@ public class AdminService {
         }
         return instance;
     }
+
+    //For testing purposes only
+    static void resetInstance() {
+        instance = null;
+    }
+
     public boolean login(String username, String password) {
         return adminsRepository.login(username, password);
     } 

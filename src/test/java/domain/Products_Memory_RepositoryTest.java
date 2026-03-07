@@ -17,6 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import domain.Coupon.ValueType;
+
 
 public class Products_Memory_RepositoryTest {
     private Products_Memory_Repository repository;
@@ -292,7 +294,7 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateValue_ProductDoesNotExist() {
-        assertThrows(IllegalArgumentException.class, () -> repository.updateCouponValue(UUID.randomUUID(), Coupon.ValueType.STRING, "Updated Value"));
+        assertThrows(IllegalArgumentException.class, () -> repository.updateCouponValue(UUID.randomUUID(),ValueType.STRING ,"Updated Value"));
     }
 
     @Test

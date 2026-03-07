@@ -1,5 +1,6 @@
 package domain;
 
+
 public class Coupon extends Product {
 
     public enum ValueType {
@@ -89,5 +90,23 @@ public class Coupon extends Product {
             throw new IllegalArgumentException("Margin percentage must be between 0 and 100");
         }
         this.minimumSellPrice = costPrice * (1 + marginPercentage / 100);
+    }
+
+    // ---------- Validation ----------
+    @Override
+    public void validate() {
+       super.validate(); 
+        if (getCostPrice() < 0) {
+            throw new IllegalArgumentException("Cost price cannot be negative");
+        }
+        if (getMarginPercentage() < 0 || getMarginPercentage() > 100) {
+            throw new IllegalArgumentException("Margin percentage must be between 0 and 100");
+        }
+        if (valueType == null) {
+            throw new IllegalArgumentException("Value type cannot be null");
+        }
+        if (getValue() == null || getValue().trim().isEmpty()) {
+            throw new IllegalArgumentException("Coupon value cannot be null or empty");
+        }
     }
 }
