@@ -1,8 +1,9 @@
-package business;
+package domain;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 
 public class Admins_Memory_RepositoryTest {
     private Admins_Memory_Repository repo = new Admins_Memory_Repository();

@@ -1,4 +1,4 @@
-package business;
+package domain;
 
 public class Coupon extends Product {
 

@@ -1,4 +1,4 @@
-package business;
+package domain;
 
 public class Admin {
     private String username;
