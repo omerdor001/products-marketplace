@@ -33,10 +33,12 @@ public class Coupon extends Product {
         return marginPercentage;
     }
 
+    @Override
     public double getMinimumSellPrice() {
         return minimumSellPrice;
     }
 
+    @Override
     public boolean isSold() {
         return isSold;
     }
@@ -45,17 +47,20 @@ public class Coupon extends Product {
         return valueType;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
     // ---------- Setters ----------
 
+    @Override
     public void setCostPrice(double costPrice) {
         this.costPrice = costPrice;
         calculateMinimumSellPrice();
     }
 
+    @Override
     public void setMarginPercentage(double marginPercentage) {
         this.marginPercentage = marginPercentage;
         calculateMinimumSellPrice();
@@ -69,6 +74,7 @@ public class Coupon extends Product {
         this.valueType = valueType;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
