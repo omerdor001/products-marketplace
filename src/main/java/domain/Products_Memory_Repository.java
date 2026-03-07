@@ -1,4 +1,4 @@
-package business;
+package domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,21 @@ import java.util.UUID;
 public class Products_Memory_Repository {
     private List<Product> products;
 
-    public Products_Memory_Repository() {
-        this.products = new ArrayList<>();
+    private static Products_Memory_Repository instance;
+
+    private Products_Memory_Repository() {
+        products = new ArrayList<>();
+    }
+
+    public static synchronized Products_Memory_Repository getInstance() {
+        if (instance == null) {
+            instance = new Products_Memory_Repository();
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
     }
 
     public void addCoupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
@@ -54,7 +67,29 @@ public class Products_Memory_Repository {
         products.removeIf(p -> p.getId().equals(productId));
     }
 
-    public void updateCostPrice(UUID productId, double costPrice) {
+    public List<Product> getAllProducts() {
+        System.out.println(products.size());
+        return new ArrayList<>(products);
+    }
+
+    public Product getProductById(UUID productId) {
+        return products.stream()
+                .filter(p -> p.getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Product> getAvailableProducts() {
+        List<Product> availableProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (!product.isSold()) {
+                availableProducts.add(product);
+            }
+        }
+        return availableProducts;
+    }
+
+    public void updateCouponCostPrice(UUID productId, double costPrice) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -68,7 +103,7 @@ public class Products_Memory_Repository {
         product.setCostPrice(costPrice);
     }
 
-    public void updateMarginPercentage(UUID productId, double marginPercentage) {
+    public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -85,7 +120,7 @@ public class Products_Memory_Repository {
         product.setMarginPercentage(marginPercentage);
     }
 
-    public void updateValue(UUID productId, String value) {
+    public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -131,27 +166,6 @@ public class Products_Memory_Repository {
             throw new IllegalStateException("Product is already sold");
         }
         product.setSold(true);
-    }
-
-    public List<Product> getAllProducts() {
-        return new ArrayList<>(products);
-    }
-
-    public Product getProductById(UUID productId) {
-        return products.stream()
-                .filter(p -> p.getId().equals(productId))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public List<Product> getAvailableProducts() {
-        List<Product> availableProducts = new ArrayList<>();
-        for (Product product : products) {
-            if (!product.isSold()) {
-                availableProducts.add(product);
-            }
-        }
-        return availableProducts;
     }
 
     //Purchase Logic

@@ -1,16 +1,16 @@
-package business;
+package domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public abstract class Product {
 
-    private UUID id;
+public abstract class Product {
+    private UUID id = UUID.randomUUID();
     private String name;
     private String description;
     private String imageUrl;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Product(String name, String description, String imageUrl) {
         this.id = UUID.randomUUID();
@@ -101,6 +101,28 @@ public abstract class Product {
     public boolean isSold() {
         throw new UnsupportedOperationException("Unimplemented method 'isSold'");
     }
+
+    // ---------- Validation ----------
+
+    public void validate() {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name cannot be null or empty");
+        }
+
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Product description cannot be null or empty");
+        }
+
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException("Image URL cannot be null or empty");
+        }
+
+        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            throw new IllegalArgumentException("Image URL must start with http:// or https://");
+        }
+    }
+
+
 
    
 
