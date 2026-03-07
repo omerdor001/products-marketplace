@@ -46,6 +46,14 @@ public class Product {
         return updatedAt;
     }
 
+    public String getValue() {
+        throw new UnsupportedOperationException("Value is only supported for coupons");
+    }
+
+    public double getMinimumSellPrice() {
+        throw new UnsupportedOperationException("Minimum sell price is only supported for coupons");
+    }
+
     
     // ---------- Setters ----------
     
@@ -78,6 +86,10 @@ public class Product {
 
     public void setSold(boolean isSold) {
         throw new UnsupportedOperationException("Sold status is only supported for coupons");
+    }
+
+    public boolean isSold() {
+        throw new UnsupportedOperationException("Unimplemented method 'isSold'");
     }
 
 }

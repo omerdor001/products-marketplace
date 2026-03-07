@@ -33,10 +33,12 @@ public class Coupon extends Product {
         return marginPercentage;
     }
 
+    @Override
     public double getMinimumSellPrice() {
         return minimumSellPrice;
     }
 
+    @Override
     public boolean isSold() {
         return isSold;
     }
@@ -45,6 +47,7 @@ public class Coupon extends Product {
         return valueType;
     }
 
+    @Override
     public String getValue() {
         return value;
     }

@@ -67,4 +67,51 @@ public class Products_Memory_Repository {
                 .orElse(null);
     }
 
+    //Purchase logic
+
+    public List<Product> getAvailableProducts() {
+        List<Product> availableProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (!product.isSold()) {
+                availableProducts.add(product);
+            }
+        }
+        return availableProducts;
+    }
+
+    public synchronized String purchaseProductByCustomer(String productId) {
+        Product product = getProductById(productId);
+        if(product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+        if(!products.contains(product)) {
+            throw new IllegalArgumentException("Product not found in repository");
+        }
+        if(product.isSold()) {
+            throw new IllegalStateException("Product is already sold");
+        }
+        product.setSold(true);
+        return product.getValue();
+    }
+
+    public synchronized String purchaseProductByReseller(String productId,double resellerPrice) {
+        Product product = getProductById(productId);
+        if(product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+        if(!products.contains(product)) {
+            throw new IllegalArgumentException("Product not found in repository");
+        }
+        if(product.isSold()) {
+            throw new IllegalStateException("Product is already sold");
+        }
+        if(resellerPrice < product.getMinimumSellPrice()) {
+            throw new IllegalArgumentException("Reseller price must be at least the minimum sell price");
+        }
+        product.setSold(true);
+        return product.getValue();
+    }
+
+
+
 }
