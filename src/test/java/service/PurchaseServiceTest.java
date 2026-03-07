@@ -38,7 +38,7 @@ public class PurchaseServiceTest {
        ProductService.resetInstance();
     }
     
-       // ===== Customer Tests =====
+    // ---------- Purchase Product By Customer ----------
     @Test
     void testPurchaseProductByCustomer() {
         productService.addCoupon("Product1", "Description1", "http://image.url/1", 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
@@ -102,7 +102,7 @@ public class PurchaseServiceTest {
                 () -> purchaseService.purchaseProductByCustomer(UUID.randomUUID()));
     }
 
-    // ===== Reseller Tests =====
+    // ---------- Purchase Product By Reseller ----------
     @Test
     void testPurchaseProductByReseller() {
         String validJwtToken = JWTTokenValidator.getInstance("testsecretkeytestsecretkey", 3600000).generateTokenForTesting("reseller1");

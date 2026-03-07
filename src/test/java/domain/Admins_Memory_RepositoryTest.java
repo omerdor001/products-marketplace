@@ -21,23 +21,7 @@ public class Admins_Memory_RepositoryTest {
         Admins_Memory_Repository.resetInstance();
     }
 
-    @Test
-    void testLoginSuccess() {
-        repo.addAdmin("admin1", "password1");
-        assert repo.login("admin1", "password1");
-    }
-
-    @Test
-    void testLoginFailure() {
-        repo.addAdmin("admin2", "password2");
-        assert !repo.login("admin2", "wrongpassword");
-    }
-
-    @Test
-    void testLoginNonExistentAdmin() {
-        assert !repo.login("nonexistent", "password");      
-    }
-
+    // ---------- Add Admin ----------
     @Test
     void testAddAdminNullUsername() {
         Exception ex = assertThrows(IllegalArgumentException.class, () ->
@@ -79,4 +63,23 @@ public class Admins_Memory_RepositoryTest {
         assertEquals("Admin already exists", ex.getMessage());
     }
 
+    // ---------- Login ----------
+    @Test
+    void testLoginSuccess() {
+        repo.addAdmin("admin1", "password1");
+        assert repo.login("admin1", "password1");
+    }
+
+    @Test
+    void testLoginFailure() {
+        repo.addAdmin("admin2", "password2");
+        assert !repo.login("admin2", "wrongpassword");
+    }
+
+    @Test
+    void testLoginNonExistentAdmin() {
+        assert !repo.login("nonexistent", "password");      
+    }
+
+  
 }

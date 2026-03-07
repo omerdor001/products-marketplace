@@ -3,6 +3,7 @@ package domain;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+
 public abstract class Product {
     private UUID id = UUID.randomUUID();
     private String name;

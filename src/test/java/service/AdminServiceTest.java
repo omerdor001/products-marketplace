@@ -21,6 +21,7 @@ class AdminServiceTest {
         AdminService.resetInstance();
     }
 
+    // ---------- Add Admin ----------
     @Test
     void testAddAdminSuccess() {
         adminService.addAdmin("omer", "pass123");
@@ -36,6 +37,7 @@ class AdminServiceTest {
         assertEquals("Admin already exists", ex.getMessage());
     }
     
+    // ---------- Login ----------
     @Test
     void testLoginSuccess() {
         adminService.addAdmin("omer", "pass123");
