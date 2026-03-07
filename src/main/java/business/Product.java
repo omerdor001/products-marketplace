@@ -63,4 +63,21 @@ public class Product {
         this.imageUrl = imageUrl;
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void setCostPrice(double costPrice) {
+      throw new UnsupportedOperationException("Cost price is only supported for coupons");
+    }
+
+    public void setMarginPercentage(double marginPercentage) {
+        throw new UnsupportedOperationException("Margin percentage is only supported for coupons");
+    }
+
+    public void setValue(String value) {
+        throw new UnsupportedOperationException("Value is only supported for coupons");
+    }
+
+    public void setSold(boolean isSold) {
+        throw new UnsupportedOperationException("Sold status is only supported for coupons");
+    }
+
 }
