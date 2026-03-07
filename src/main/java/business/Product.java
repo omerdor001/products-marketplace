@@ -3,7 +3,8 @@ package business;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Product {
+public abstract class Product {
+
     private UUID id;
     private String name;
     private String description;
@@ -46,12 +47,21 @@ public class Product {
         return updatedAt;
     }
 
+
     public String getValue() {
         throw new UnsupportedOperationException("Value is only supported for coupons");
     }
 
     public double getMinimumSellPrice() {
         throw new UnsupportedOperationException("Minimum sell price is only supported for coupons");
+    }
+
+    public double getMarginPercentage() {
+        throw new UnsupportedOperationException("Unimplemented method 'getMarginPercentage'");
+    }
+
+    public double getCostPrice() {
+        throw new UnsupportedOperationException("Unimplemented method 'getCostPrice'");
     }
 
     
@@ -91,5 +101,7 @@ public class Product {
     public boolean isSold() {
         throw new UnsupportedOperationException("Unimplemented method 'isSold'");
     }
+
+   
 
 }

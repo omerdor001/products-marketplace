@@ -25,10 +25,12 @@ public class Coupon extends Product {
 
     // ---------- Getters ----------
 
+    @Override
     public double getCostPrice() {
         return costPrice;
     }
 
+    @Override
     public double getMarginPercentage() {
         return marginPercentage;
     }
