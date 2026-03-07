@@ -7,8 +7,21 @@ import java.util.UUID;
 public class Products_Memory_Repository {
     private List<Product> products;
 
-    public Products_Memory_Repository() {
-        this.products = new ArrayList<>();
+    private static Products_Memory_Repository instance;
+
+    private Products_Memory_Repository() {
+        products = new ArrayList<>();
+    }
+
+    public static synchronized Products_Memory_Repository getInstance() {
+        if (instance == null) {
+            instance = new Products_Memory_Repository();
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
     }
 
     public void addCoupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
@@ -55,6 +68,7 @@ public class Products_Memory_Repository {
     }
 
     public List<Product> getAllProducts() {
+        System.out.println(products.size());
         return new ArrayList<>(products);
     }
 

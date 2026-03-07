@@ -11,8 +11,9 @@ public class PurchaseService {
     private JWTTokenValidator tokenValidator; 
 
     private PurchaseService() {
-        productsRepository = new Products_Memory_Repository();
-        tokenValidator = new JWTTokenValidator("supersecretkey12345678901234567890", 3600_000);
+        productsRepository = Products_Memory_Repository.getInstance();
+        String secret = "mySuperSecureSecretKeyThatIsAtLeast32Bytes!";
+        tokenValidator = JWTTokenValidator.getInstance(secret, 3600000); 
     }
 
     public static PurchaseService getInstance() {
@@ -20,6 +21,12 @@ public class PurchaseService {
             instance = new PurchaseService();
         }
         return instance;
+    }
+
+    //For testing purposes only
+    public static void resetInstance() {
+        Products_Memory_Repository.resetInstance();
+        instance = null;
     }
 
     public String purchaseProductByCustomer(UUID productId) {

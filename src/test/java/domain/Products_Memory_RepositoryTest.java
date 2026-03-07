@@ -25,12 +25,12 @@ public class Products_Memory_RepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository = new Products_Memory_Repository();
+        repository = Products_Memory_Repository.getInstance();
     }
 
     @AfterEach
     void tearDown() {
-        repository = null;
+        Products_Memory_Repository.resetInstance();
     }
 
     @Test

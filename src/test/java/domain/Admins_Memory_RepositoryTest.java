@@ -9,16 +9,16 @@ import org.junit.jupiter.api.Test;
 
 
 public class Admins_Memory_RepositoryTest {
-    private Admins_Memory_Repository repo = new Admins_Memory_Repository();
+    private Admins_Memory_Repository repo = Admins_Memory_Repository.getInstance();
     
     @BeforeEach
     void setUp() {
-        repo = new Admins_Memory_Repository();
+        repo = Admins_Memory_Repository.getInstance();
     }
 
     @AfterEach
     void tearDown() {
-        repo = null; 
+        Admins_Memory_Repository.resetInstance();
     }
 
     @Test

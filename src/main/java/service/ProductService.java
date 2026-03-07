@@ -12,7 +12,7 @@ public class ProductService {
     private Products_Memory_Repository productsRepository;
 
     private ProductService() {
-        productsRepository = new Products_Memory_Repository();
+        productsRepository = Products_Memory_Repository.getInstance();
     }
 
     public static ProductService getInstance() {
@@ -20,6 +20,12 @@ public class ProductService {
             instance = new ProductService();
         }
         return instance;
+    }
+
+    //For testing purposes only
+    public static void resetInstance() {
+        Products_Memory_Repository.resetInstance();
+        instance = null;
     }
 
     public void addCoupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value)  {
@@ -57,6 +63,10 @@ public class ProductService {
     public void updateImageURL(UUID productId, String imageUrl) {
         productsRepository.updateImageURL(productId, imageUrl);
     }   
+
+    public void markAsSold(UUID productId) {
+        productsRepository.markAsSold(productId);
+    }
 }
 
 

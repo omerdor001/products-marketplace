@@ -7,12 +7,22 @@ import java.security.Key;
 import java.util.Date;
 
 public class JWTTokenValidator implements TokenValidator {
+
     private final Key secretKey;
     private final long tokenValidityMillis;
 
-    public JWTTokenValidator(String secret, long tokenValidityMillis) {
+    private static JWTTokenValidator instance;
+
+    private JWTTokenValidator(String secret, long tokenValidityMillis) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.tokenValidityMillis = tokenValidityMillis;
+    }
+
+    public static synchronized JWTTokenValidator getInstance(String secret, long tokenValidityMillis) {
+        if (instance == null) {
+            instance = new JWTTokenValidator(secret, tokenValidityMillis);
+        }
+        return instance;
     }
 
     public String generateTokenForTesting(String resellerId) {
@@ -34,9 +44,9 @@ public class JWTTokenValidator implements TokenValidator {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
-                    .parseClaimsJws(token); 
+                    .parseClaimsJws(token);
             return true;
-        } catch (JwtException e) { 
+        } catch (JwtException e) {
             return false;
         }
     }

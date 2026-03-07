@@ -6,8 +6,22 @@ import java.util.List;
 public class Admins_Memory_Repository {
     private List<Admin> admins;
 
-    public Admins_Memory_Repository() {
+     private static Admins_Memory_Repository instance;
+
+    private Admins_Memory_Repository() {
         this.admins = new ArrayList<>();
+    }
+
+    public static synchronized Admins_Memory_Repository getInstance() {
+        if (instance == null) {
+            instance = new Admins_Memory_Repository();
+        }
+        return instance;
+    }
+
+    //For testing purposes only
+    public static void resetInstance() {
+        instance = null;
     }
 
     public void addAdmin(String username, String password) {

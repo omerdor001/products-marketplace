@@ -7,7 +7,7 @@ public class AdminService {
     private Admins_Memory_Repository adminsRepository;
 
     private AdminService() {
-        adminsRepository = new Admins_Memory_Repository();
+        adminsRepository = Admins_Memory_Repository.getInstance();
     }
 
     public static AdminService getInstance() {
@@ -18,7 +18,8 @@ public class AdminService {
     }
 
     //For testing purposes only
-    static void resetInstance() {
+    public static void resetInstance() {
+        Admins_Memory_Repository.resetInstance();
         instance = null;
     }
 
