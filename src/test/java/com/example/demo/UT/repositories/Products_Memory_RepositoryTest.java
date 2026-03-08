@@ -1,4 +1,4 @@
-package domain;
+package com.example.demo.UT.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,7 +17,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import domain.Coupon.ValueType;
+import com.example.demo.domain.Coupon;
+import com.example.demo.domain.Product;
+import com.example.demo.domain.Coupon.ValueType;
+import com.example.demo.repositories.Products_Memory_Repository;
 
 
 public class Products_Memory_RepositoryTest {

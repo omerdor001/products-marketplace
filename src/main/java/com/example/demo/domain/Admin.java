@@ -1,6 +1,15 @@
-package domain;
+package com.example.demo.domain;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "Admins")
 public class Admin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String username;
     private String encryptedPassword;
     private boolean isLogged;
@@ -10,6 +19,7 @@ public class Admin {
         this.encryptedPassword = encryptedPassword;
         this.isLogged = false;
     }
+    public Admin() {}
 
     // ---------- Getters ----------
 

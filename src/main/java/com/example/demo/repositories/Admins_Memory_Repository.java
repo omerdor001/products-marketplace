@@ -1,9 +1,11 @@
-package domain;
+package com.example.demo.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Admins_Memory_Repository {
+import com.example.demo.domain.Admin;
+
+public class Admins_Memory_Repository implements AdminRepository {
     private List<Admin> admins;
 
      private static Admins_Memory_Repository instance;
@@ -41,6 +43,12 @@ public class Admins_Memory_Repository {
     }
 
     public boolean login(String username, String password) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
         return admins.stream()
                 .anyMatch(
                         admin -> admin.getUsername().equals(username) && admin.getEncryptedPassword().equals(password));

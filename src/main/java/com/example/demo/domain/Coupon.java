@@ -1,6 +1,10 @@
-package domain;
+package com.example.demo.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "Coupons")
 public class Coupon extends Product {
 
     public enum ValueType {
@@ -13,14 +17,18 @@ public class Coupon extends Product {
     private double minimumSellPrice;
     private boolean isSold;
     private ValueType valueType;
-    private String value;
+    private String couponValue;
+
+    public Coupon() {
+        super();
+    }
 
     public Coupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, ValueType valueType, String value) {
         super(name, description, imageUrl);
         this.costPrice = costPrice;
         this.marginPercentage = marginPercentage;
         this.valueType = valueType;
-        this.value = value;
+        this.couponValue = value;
         calculateMinimumSellPrice();
     }
 
@@ -46,13 +54,14 @@ public class Coupon extends Product {
         return isSold;
     }
 
+    @Override
     public ValueType getValueType() {
         return valueType;
     }
 
     @Override
     public String getValue() {
-        return value;
+        return couponValue;
     }
 
     // ---------- Setters ----------
@@ -73,13 +82,14 @@ public class Coupon extends Product {
         isSold = sold;
     }
 
+    @Override
     public void setValueType(ValueType valueType) {
         this.valueType = valueType;
     }
 
     @Override
     public void setValue(String value) {
-        this.value = value;
+        this.couponValue = value;
     }
 
     private void calculateMinimumSellPrice() {

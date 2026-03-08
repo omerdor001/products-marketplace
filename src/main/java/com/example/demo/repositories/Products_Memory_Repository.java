@@ -1,10 +1,13 @@
-package domain;
+package com.example.demo.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Products_Memory_Repository {
+import com.example.demo.domain.Coupon;
+import com.example.demo.domain.Product;
+
+public class Products_Memory_Repository implements ProductRepository {
     private List<Product> products;
 
     private static Products_Memory_Repository instance;
@@ -24,6 +27,9 @@ public class Products_Memory_Repository {
         instance = null;
     }
 
+    // ---------------- Add ----------------
+
+    @Override
     public void addCoupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Coupon name cannot be null or empty");
@@ -53,25 +59,19 @@ public class Products_Memory_Repository {
         products.add(coupon);
     }
 
-    public void removeProduct(UUID productId) {
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        products.removeIf(p -> p.getId().equals(productId));
+    @Override
+    public Product saveProduct(Product product) {
+        throw new UnsupportedOperationException("Unimplemented method 'saveProduct'");
     }
 
+     // ---------------- Retrieve ----------------
+
+    @Override
     public List<Product> getAllProducts() {
-        System.out.println(products.size());
         return new ArrayList<>(products);
     }
 
+    @Override
     public Product getProductById(UUID productId) {
         return products.stream()
                 .filter(p -> p.getId().equals(productId))
@@ -79,6 +79,7 @@ public class Products_Memory_Repository {
                 .orElse(null);
     }
 
+    @Override
     public List<Product> getAvailableProducts() {
         List<Product> availableProducts = new ArrayList<>();
         for (Product product : products) {
@@ -89,6 +90,9 @@ public class Products_Memory_Repository {
         return availableProducts;
     }
 
+    // ---------------- Update ----------------
+
+    @Override
     public void updateCouponCostPrice(UUID productId, double costPrice) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
@@ -103,6 +107,7 @@ public class Products_Memory_Repository {
         product.setCostPrice(costPrice);
     }
 
+    @Override
     public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
@@ -120,6 +125,7 @@ public class Products_Memory_Repository {
         product.setMarginPercentage(marginPercentage);
     }
 
+    @Override
     public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
@@ -134,9 +140,11 @@ public class Products_Memory_Repository {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("Value cannot be null or empty");
         }
+        product.setValueType(valueType);
         product.setValue(value);
     }
 
+    @Override
     public void updateImageURL(UUID productId, String imageUrl) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
@@ -154,6 +162,7 @@ public class Products_Memory_Repository {
         product.setImageUrl(imageUrl);
     }
 
+    @Override
     public void markAsSold(UUID productId) {
         Product product = getProductById(productId);
         if(product == null) {
@@ -168,8 +177,26 @@ public class Products_Memory_Repository {
         product.setSold(true);
     }
 
-    //Purchase Logic
+     // ---------------- Delete ----------------
 
+    @Override
+    public void removeProduct(UUID productId) {
+        if(productId == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
+        Product product = getProductById(productId);
+        if(product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+        if(!products.contains(product)) {
+            throw new IllegalArgumentException("Product not found in repository");
+        }
+        products.removeIf(p -> p.getId().equals(productId));
+    }
+
+     // ---------------- Purchase Logic ----------------
+
+    @Override
     public synchronized String purchaseProductByCustomer(UUID productId) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
@@ -188,6 +215,7 @@ public class Products_Memory_Repository {
         return product.getValue();
     }
 
+    @Override
     public synchronized String purchaseProductByReseller(UUID productId, double resellerPrice) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");

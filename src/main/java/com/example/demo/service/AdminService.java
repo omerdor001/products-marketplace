@@ -1,0 +1,33 @@
+package com.example.demo.service;
+
+import com.example.demo.facades.AdminFacade;
+
+public class AdminService {
+
+    private static AdminService instance;
+    private AdminFacade adminFacade;
+
+    private AdminService(AdminFacade adminsFacade) {
+        this.adminFacade = adminsFacade;
+    }
+
+    public static AdminService getInstance(AdminFacade facade) {
+        if (instance == null) {
+            instance = new AdminService(facade);
+        }
+        return instance;
+    }
+
+    // For testing purposes
+    public static void resetInstance() {
+        instance = null;
+    }
+
+    public boolean login(String username, String password) {
+        return adminFacade.login(username, password);
+    }
+
+    public void addAdmin(String username, String password) {
+        adminFacade.addAdmin(username, password);
+    }
+}
