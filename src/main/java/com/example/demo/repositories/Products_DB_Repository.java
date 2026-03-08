@@ -154,6 +154,7 @@ public class Products_DB_Repository implements ProductRepository {
 
     // ---------------- Additional helper ----------------
 
+    @SuppressWarnings("null")
     public boolean exists(UUID productId) {
         return dbRepository.existsById(productId);
     }

@@ -1,33 +1,33 @@
 package com.example.demo.service;
 
-import com.example.demo.repositories.Admins_Memory_Repository;
+import com.example.demo.facades.AdminFacade;
 
 public class AdminService {
-    private static AdminService instance;
-    private Admins_Memory_Repository adminsRepository;
 
-    private AdminService() {
-        adminsRepository = Admins_Memory_Repository.getInstance();
+    private static AdminService instance;
+    private AdminFacade adminFacade;
+
+    private AdminService(AdminFacade adminsFacade) {
+        this.adminFacade = adminsFacade;
     }
 
-    public static AdminService getInstance() {
+    public static AdminService getInstance(AdminFacade facade) {
         if (instance == null) {
-            instance = new AdminService();
+            instance = new AdminService(facade);
         }
         return instance;
     }
 
-    //For testing purposes only
+    // For testing purposes
     public static void resetInstance() {
-        Admins_Memory_Repository.resetInstance();
         instance = null;
     }
 
     public boolean login(String username, String password) {
-        return adminsRepository.login(username, password);
-    } 
-    
+        return adminFacade.login(username, password);
+    }
+
     public void addAdmin(String username, String password) {
-        adminsRepository.addAdmin(username, password);
+        adminFacade.addAdmin(username, password);
     }
 }
