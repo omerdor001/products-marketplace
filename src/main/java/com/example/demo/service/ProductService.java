@@ -1,11 +1,11 @@
-package service;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.UUID;
 
-import domain.Coupon;
-import domain.Product;
-import domain.Products_Memory_Repository;
+import com.example.demo.domain.Coupon;
+import com.example.demo.domain.Product;
+import com.example.demo.repositories.Products_Memory_Repository;
 
 public class ProductService {
     private static ProductService instance;

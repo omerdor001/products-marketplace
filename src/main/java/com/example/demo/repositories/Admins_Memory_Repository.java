@@ -1,9 +1,11 @@
-package domain;
+package com.example.demo.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Admins_Memory_Repository {
+import com.example.demo.domain.Admin;
+
+public class Admins_Memory_Repository implements AdminRepository {
     private List<Admin> admins;
 
      private static Admins_Memory_Repository instance;

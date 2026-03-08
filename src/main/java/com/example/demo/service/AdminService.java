@@ -1,6 +1,6 @@
-package service;
+package com.example.demo.service;
 
-import domain.Admins_Memory_Repository;
+import com.example.demo.repositories.Admins_Memory_Repository;
 
 public class AdminService {
     private static AdminService instance;

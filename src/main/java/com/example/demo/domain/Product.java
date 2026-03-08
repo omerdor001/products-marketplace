@@ -1,16 +1,24 @@
-package domain;
+package com.example.demo.domain;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "Products")
 public abstract class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id = UUID.randomUUID();
+
     private String name;
     private String description;
     private String imageUrl;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public Product() {}
 
     public Product(String name, String description, String imageUrl) {
         this.id = UUID.randomUUID();
@@ -91,6 +99,10 @@ public abstract class Product {
     }
 
     public void setValue(String value) {
+        throw new UnsupportedOperationException("Value is only supported for coupons");
+    }
+
+    public void setValueType(Coupon.ValueType valueType) {
         throw new UnsupportedOperationException("Value is only supported for coupons");
     }
 

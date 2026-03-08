@@ -17,9 +17,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import domain.Coupon;
-import domain.Product;
-import security.JWTTokenValidator;
+import com.example.demo.domain.Coupon;
+import com.example.demo.domain.Product;
+import com.example.demo.security.JWTTokenValidator;
+import com.example.demo.service.ProductService;
+import com.example.demo.service.PurchaseService;
 
 public class PurchaseServiceTest {
     private PurchaseService purchaseService;

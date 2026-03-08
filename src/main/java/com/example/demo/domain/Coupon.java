@@ -1,6 +1,10 @@
-package domain;
+package com.example.demo.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "Coupons")
 public class Coupon extends Product {
 
     public enum ValueType {
@@ -14,6 +18,10 @@ public class Coupon extends Product {
     private boolean isSold;
     private ValueType valueType;
     private String value;
+
+    public Coupon() {
+        super();
+    }
 
     public Coupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, ValueType valueType, String value) {
         super(name, description, imageUrl);
@@ -73,6 +81,7 @@ public class Coupon extends Product {
         isSold = sold;
     }
 
+    @Override
     public void setValueType(ValueType valueType) {
         this.valueType = valueType;
     }

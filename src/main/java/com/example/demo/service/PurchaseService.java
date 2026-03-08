@@ -1,8 +1,9 @@
-package service;
+package com.example.demo.service;
 
 import java.util.UUID;
-import domain.Products_Memory_Repository;
-import security.JWTTokenValidator;
+
+import com.example.demo.repositories.Products_Memory_Repository;
+import com.example.demo.security.JWTTokenValidator;
 
 public class PurchaseService {
 

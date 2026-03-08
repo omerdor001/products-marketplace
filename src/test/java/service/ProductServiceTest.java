@@ -13,8 +13,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import domain.Coupon;
-import domain.Product;
+import com.example.demo.domain.Coupon;
+import com.example.demo.domain.Product;
+import com.example.demo.service.ProductService;
 
 public class ProductServiceTest {
 

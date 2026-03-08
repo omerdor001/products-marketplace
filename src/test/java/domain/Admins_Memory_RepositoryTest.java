@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.demo.repositories.Admins_Memory_Repository;
+
 
 public class Admins_Memory_RepositoryTest {
     private Admins_Memory_Repository repo = Admins_Memory_Repository.getInstance();
