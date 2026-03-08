@@ -13,13 +13,13 @@ public class AdminFacade {
     }
 
     public void addAdmin(String username, String password) {
-        dbRepository.addAdmin(username, password);
         memoryRepository.addAdmin(username, password);
+        dbRepository.addAdmin(username, password);
     }
 
     public boolean login(String username, String password) {
-        boolean dbLogin = dbRepository.login(username, password);
         boolean memoryLogin = memoryRepository.login(username, password);
+        boolean dbLogin = dbRepository.login(username, password);
         return dbLogin && memoryLogin;
     }
 

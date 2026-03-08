@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.example.demo.domain.Coupon.ValueType;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Products")
 public abstract class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     private String name;
     private String description;
@@ -70,6 +71,10 @@ public abstract class Product {
 
     public double getCostPrice() {
         throw new UnsupportedOperationException("Unimplemented method 'getCostPrice'");
+    }
+
+    public ValueType getValueType() {
+        throw new UnsupportedOperationException("Value is only supported for coupons");
     }
 
     

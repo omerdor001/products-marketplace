@@ -22,6 +22,10 @@ public class Admins_DB_Repository implements AdminRepository {
         this.dbRepository = dbRepository;
     }
 
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     @Override
     public void addAdmin(String username, String password) {
         if (username == null || username.trim().isEmpty())
@@ -30,13 +34,16 @@ public class Admins_DB_Repository implements AdminRepository {
             throw new IllegalArgumentException("Password cannot be null or empty");
         if (dbRepository.existsByUsername(username))
             throw new IllegalArgumentException("Admin already exists");
-
         Admin admin = new Admin(username, password);
-        entityManager.persist(admin); 
+        entityManager.persist(admin);
     }
 
     @Override
     public boolean login(String username, String password) {
+        if (username == null || username.trim().isEmpty())
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        if (password == null || password.trim().isEmpty())
+            throw new IllegalArgumentException("Password cannot be null or empty");
         Admin adminOpt = dbRepository.findByUsername(username);
         return adminOpt != null && adminOpt.getEncryptedPassword().equals(password);
     }

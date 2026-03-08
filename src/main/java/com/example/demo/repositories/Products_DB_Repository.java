@@ -25,6 +25,10 @@ public class Products_DB_Repository implements ProductRepository {
         this.dbRepository = dbRepository;
     }
 
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     // ---------------- Add ----------------
 
     @Override

@@ -1,4 +1,4 @@
-package domain;
+package com.example.demo.UT.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,6 +76,38 @@ public class Admins_Memory_RepositoryTest {
     void testLoginFailure() {
         repo.addAdmin("admin2", "password2");
         assert !repo.login("admin2", "wrongpassword");
+    }
+
+    @Test
+    void testLoginNullUsername() {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                repo.login(null, "password123")
+        );
+        assertEquals("Username cannot be null or empty", ex.getMessage());
+    }
+
+    @Test
+    void testLoginEmptyUsername() {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                repo.login("   ", "password123")
+        );
+        assertEquals("Username cannot be null or empty", ex.getMessage());
+    }
+
+    @Test
+    void testLoginNullPassword() {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                repo.login("admin1", null)
+        );
+        assertEquals("Password cannot be null or empty", ex.getMessage());
+    }
+
+    @Test
+    void testLoginEmptyPassword() {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                repo.login("admin1", "   ")
+        );
+        assertEquals("Password cannot be null or empty", ex.getMessage());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package domain;
+package com.example.demo.UT.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

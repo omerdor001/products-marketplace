@@ -43,6 +43,12 @@ public class Admins_Memory_Repository implements AdminRepository {
     }
 
     public boolean login(String username, String password) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
         return admins.stream()
                 .anyMatch(
                         admin -> admin.getUsername().equals(username) && admin.getEncryptedPassword().equals(password));

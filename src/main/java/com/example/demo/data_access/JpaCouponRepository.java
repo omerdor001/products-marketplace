@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface JpaCouponRepository extends JpaRepository<Coupon, UUID> {
     List<Coupon> findByName(String name);
-    List<Coupon> findBySoldFalse();
+    List<Coupon> findByIsSoldFalse();
     List<Coupon> findByValueType(ValueType valueType);
     boolean existsByName(String name);
 }

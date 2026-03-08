@@ -17,7 +17,7 @@ public class Coupon extends Product {
     private double minimumSellPrice;
     private boolean isSold;
     private ValueType valueType;
-    private String value;
+    private String couponValue;
 
     public Coupon() {
         super();
@@ -28,7 +28,7 @@ public class Coupon extends Product {
         this.costPrice = costPrice;
         this.marginPercentage = marginPercentage;
         this.valueType = valueType;
-        this.value = value;
+        this.couponValue = value;
         calculateMinimumSellPrice();
     }
 
@@ -54,13 +54,14 @@ public class Coupon extends Product {
         return isSold;
     }
 
+    @Override
     public ValueType getValueType() {
         return valueType;
     }
 
     @Override
     public String getValue() {
-        return value;
+        return couponValue;
     }
 
     // ---------- Setters ----------
@@ -88,7 +89,7 @@ public class Coupon extends Product {
 
     @Override
     public void setValue(String value) {
-        this.value = value;
+        this.couponValue = value;
     }
 
     private void calculateMinimumSellPrice() {
