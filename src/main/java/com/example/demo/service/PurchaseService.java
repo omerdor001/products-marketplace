@@ -34,12 +34,10 @@ public class PurchaseService {
         return productFacade.purchaseProductByCustomer(productId);
     }
 
-    public String purchaseProductByReseller(UUID productId, double resellerPrice, String token) {
-
+    public double purchaseProductByReseller(UUID productId, double resellerPrice, String token) {
         if (!tokenValidator.isValid(token)) {
             throw new SecurityException("Invalid or expired token");
         }
-
         return productFacade.purchaseProductByReseller(productId, resellerPrice);
     }
 }

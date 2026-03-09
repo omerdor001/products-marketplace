@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -12,11 +14,22 @@ public class Coupon extends Product {
         IMAGE
     }
 
+    @JsonView(Views.Admin.class)
     private double costPrice;
+
+    @JsonView(Views.Admin.class)
     private double marginPercentage;
+
+    @JsonView(Views.Public.class)
     private double minimumSellPrice;
+
+    @JsonView(Views.Admin.class)
     private boolean isSold;
+
+    @JsonView(Views.Admin.class)
     private ValueType valueType;
+
+    @JsonView(Views.Admin.class)
     private String couponValue;
 
     public Coupon() {

@@ -23,4 +23,10 @@ public class AdminFacade {
         return dbLogin && memoryLogin;
     }
 
+    public boolean logout(String username) {
+        boolean memoryLogout = memoryRepository.logout(username);
+        boolean dbLogout = dbRepository.logout(username);
+        return dbLogout && memoryLogout;
+    }
+
 }

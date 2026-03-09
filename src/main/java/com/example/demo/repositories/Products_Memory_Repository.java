@@ -11,9 +11,11 @@ public class Products_Memory_Repository implements ProductRepository {
     private List<Product> products;
 
     private static Products_Memory_Repository instance;
+    private final AdminRepository adminRepository;
 
     private Products_Memory_Repository() {
         products = new ArrayList<>();
+        adminRepository = Admins_Memory_Repository.getInstance();
     }
 
     public static synchronized Products_Memory_Repository getInstance() {
@@ -30,7 +32,10 @@ public class Products_Memory_Repository implements ProductRepository {
     // ---------------- Add ----------------
 
     @Override
-    public void addCoupon(String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
+    public void addCoupon(String username,String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
+        }
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Coupon name cannot be null or empty");
         }
@@ -93,7 +98,10 @@ public class Products_Memory_Repository implements ProductRepository {
     // ---------------- Update ----------------
 
     @Override
-    public void updateCouponCostPrice(UUID productId, double costPrice) {
+    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
+        }
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -108,9 +116,9 @@ public class Products_Memory_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
+    public void updateCouponMarginPercentage(String username, UUID productId, double marginPercentage) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
         }
         Product product = getProductById(productId);
         if(product == null) {
@@ -126,9 +134,9 @@ public class Products_Memory_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
+    public void updateCouponValue(String username, UUID productId, Coupon.ValueType valueType, String value) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
         }
         Product product = getProductById(productId);
         if(product == null) {
@@ -145,7 +153,10 @@ public class Products_Memory_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateImageURL(UUID productId, String imageUrl) {
+    public void updateImageURL(String username,UUID productId, String imageUrl) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
+        }
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -180,7 +191,10 @@ public class Products_Memory_Repository implements ProductRepository {
      // ---------------- Delete ----------------
 
     @Override
-    public void removeProduct(UUID productId) {
+    public void removeProduct(String username,UUID productId) {
+        if (!adminRepository.isAdminLoggedIn(username)) {
+            throw new IllegalArgumentException("Admin not logged in");
+        }
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -216,7 +230,7 @@ public class Products_Memory_Repository implements ProductRepository {
     }
 
     @Override
-    public synchronized String purchaseProductByReseller(UUID productId, double resellerPrice) {
+    public synchronized double purchaseProductByReseller(UUID productId, double resellerPrice) {
         if(productId == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
@@ -234,7 +248,7 @@ public class Products_Memory_Repository implements ProductRepository {
             throw new IllegalArgumentException("Reseller price must be at least the minimum sell price");
         }
         product.setSold(true);
-        return product.getValue();
+        return resellerPrice;
     }
 
 }

@@ -29,16 +29,16 @@ public class ProductService {
         instance = null;
     }
 
-    public void addCoupon(String name, String description, String imageUrl,
+    public void addCoupon(String username, String name, String description, String imageUrl,
                           double costPrice, double marginPercentage,
                           Coupon.ValueType valueType, String value) {
 
-        productFacade.addCoupon(name, description, imageUrl,
+        productFacade.addCoupon(username,name, description, imageUrl,
                 costPrice, marginPercentage, valueType, value);
     }
 
-    public void removeProduct(UUID productId) {
-        productFacade.removeProduct(productId);
+    public void removeProduct(String username, UUID productId) {
+        productFacade.removeProduct(username, productId);
     }
 
     public List<Product> getAllProducts() {
@@ -53,20 +53,20 @@ public class ProductService {
         return productFacade.getAvailableProducts();
     }
 
-    public void updateCouponCostPrice(UUID productId, double costPrice) {
-        productFacade.updateCouponCostPrice(productId, costPrice);
+    public void updateCouponCostPrice(String username, UUID productId, double costPrice) {
+        productFacade.updateCouponCostPrice(username, productId, costPrice);
     }
 
-    public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
-        productFacade.updateCouponMarginPercentage(productId, marginPercentage);
+    public void updateCouponMarginPercentage(String username, UUID productId, double marginPercentage) {
+        productFacade.updateCouponMarginPercentage(username, productId, marginPercentage);
     }
 
-    public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
-        productFacade.updateCouponValue(productId, valueType, value);
+    public void updateCouponValue(String username, UUID productId, Coupon.ValueType valueType, String value) {
+        productFacade.updateCouponValue(username, productId, valueType, value);
     }
 
-    public void updateImageURL(UUID productId, String imageUrl) {
-        productFacade.updateImageURL(productId, imageUrl);
+    public void updateImageURL(String username, UUID productId, String imageUrl) {
+        productFacade.updateImageURL(username, productId, imageUrl);
     }
 
     public void markAsSold(UUID productId) {

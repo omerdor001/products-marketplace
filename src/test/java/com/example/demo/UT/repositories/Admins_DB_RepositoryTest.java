@@ -26,6 +26,8 @@ public class Admins_DB_RepositoryTest {
         repository.setEntityManager(entityManager);
     }
 
+    // ---------- Add Admin ----------
+
     @Test
     void addAdmin_success() {
         when(jpaRepository.existsByUsername("admin")).thenReturn(false);
@@ -38,6 +40,8 @@ public class Admins_DB_RepositoryTest {
         when(jpaRepository.existsByUsername("admin")).thenReturn(true);
         assertThrows(IllegalArgumentException.class, () -> repository.addAdmin("admin", "password"));
     }
+
+    // ---------- Login ----------
 
     @Test
     void login_success() {
@@ -93,4 +97,32 @@ public class Admins_DB_RepositoryTest {
         boolean result = repository.login("admin", "password");
         assertFalse(result);
     }
+
+    // ---------- Logout ---------
+
+    @Test
+    void logout_success() {
+        Admin admin = new Admin("admin", "password");
+        when(jpaRepository.findByUsername("admin")).thenReturn(admin);
+        repository.login("admin", "password");
+        boolean result = repository.logout("admin");
+        assertTrue(result);
+    }
+
+    @Test
+    void logout_notLoggedIn() {
+        Admin admin = new Admin("admin", "password");
+        when(jpaRepository.findByUsername("admin")).thenReturn(admin);
+        boolean result = repository.logout("admin");
+        assertFalse(result);
+    }
+
+    @Test
+    void logout_nullUsername() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            repository.logout(null);
+        });
+    }
+
+
 }

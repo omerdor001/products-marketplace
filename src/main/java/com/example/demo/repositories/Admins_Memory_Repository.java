@@ -8,7 +8,7 @@ import com.example.demo.domain.Admin;
 public class Admins_Memory_Repository implements AdminRepository {
     private List<Admin> admins;
 
-     private static Admins_Memory_Repository instance;
+    private static Admins_Memory_Repository instance;
 
     private Admins_Memory_Repository() {
         this.admins = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Admins_Memory_Repository implements AdminRepository {
         return instance;
     }
 
-    //For testing purposes only
+    // For testing purposes only
     public static void resetInstance() {
         instance = null;
     }
@@ -49,9 +49,34 @@ public class Admins_Memory_Repository implements AdminRepository {
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty");
         }
+        for (Admin admin : admins) {
+            if (admin.getUsername().equals(username) && admin.getEncryptedPassword().equals(password)) {
+                admin.setLogged(true);
+                return true; 
+            }
+        }
+        return false;
+    }
+
+    public boolean logout(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        for (Admin admin : admins) {
+            if (admin.getUsername().equals(username) && admin.isLogged()) {
+                admin.setLogged(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdminLoggedIn(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
         return admins.stream()
-                .anyMatch(
-                        admin -> admin.getUsername().equals(username) && admin.getEncryptedPassword().equals(password));
+                .anyMatch(admin -> admin.getUsername().equals(username) && admin.isLogged());
     }
 
 }

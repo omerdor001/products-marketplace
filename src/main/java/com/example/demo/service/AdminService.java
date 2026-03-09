@@ -27,6 +27,10 @@ public class AdminService {
         return adminFacade.login(username, password);
     }
 
+    public boolean logout(String username) {
+        return adminFacade.logout(username);
+    }
+
     public void addAdmin(String username, String password) {
         adminFacade.addAdmin(username, password);
     }

@@ -45,6 +45,31 @@ public class Admins_DB_Repository implements AdminRepository {
         if (password == null || password.trim().isEmpty())
             throw new IllegalArgumentException("Password cannot be null or empty");
         Admin adminOpt = dbRepository.findByUsername(username);
-        return adminOpt != null && adminOpt.getEncryptedPassword().equals(password);
+        if (adminOpt != null && adminOpt.getEncryptedPassword().equals(password)) {
+            adminOpt.setLogged(true);
+            entityManager.merge(adminOpt);
+            return true; 
+        }
+        return false;
+    }
+
+    @Override
+    public boolean logout(String username) {
+        if (username == null || username.trim().isEmpty())
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        Admin adminOpt = dbRepository.findByUsername(username);
+        if (adminOpt != null && adminOpt.isLogged()) {
+            adminOpt.setLogged(false);
+            entityManager.merge(adminOpt);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAdminLoggedIn(String username) {
+        if (username == null || username.trim().isEmpty())
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        return dbRepository.existsByUsername(username);
     }
 }

@@ -115,5 +115,30 @@ public class Admins_Memory_RepositoryTest {
         assert !repo.login("nonexistent", "password");      
     }
 
+    // ---------- Logout ----------
+    @Test
+    void testLogoutSuccess() {
+        repo.addAdmin("admin1", "password1");
+        repo.login("admin1", "password1");
+        assert repo.logout("admin1");
+    }
+
+    @Test
+    void testLogoutNotLoggedIn() {
+        repo.addAdmin("admin2", "password2");
+        assert !repo.logout("admin2");
+    }
+
+    @Test
+    void testLogoutNullUsername() { 
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                repo.logout(null)
+        );
+        assertEquals("Username cannot be null or empty", ex.getMessage());
+    }
+
+
+
+
   
 }
