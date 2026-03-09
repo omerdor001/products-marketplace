@@ -3,18 +3,24 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.facades.ProductFacade;
+import com.example.demo.security.JWTTokenValidator;
 
-
+@Service
 public class ProductService {
 
     private static ProductService instance;
     private ProductFacade productFacade;
+    private JWTTokenValidator tokenValidator;
 
     private ProductService(ProductFacade productsFacade) {
         this.productFacade = productsFacade;
+        String secret = "mySuperSecureSecretKeyThatIsAtLeast32Bytes!";
+        tokenValidator = JWTTokenValidator.getInstance(secret, 3600000);
     }
 
     public static ProductService getInstance(ProductFacade facade) {
@@ -50,6 +56,20 @@ public class ProductService {
     }
 
     public List<Product> getAvailableProducts() {
+        return productFacade.getAvailableProducts();
+    }
+
+    public Product getProductById(UUID productId,String token) { 
+        if (!tokenValidator.isValid(token)) {
+            throw new SecurityException("Invalid or expired token");
+        }
+        return productFacade.getProductById(productId);
+    }
+
+    public List<Product> getAvailableProducts(String token) { 
+        if (!tokenValidator.isValid(token)) {
+            throw new SecurityException("Invalid or expired token");
+        }
         return productFacade.getAvailableProducts();
     }
 

@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.demo.facades.AdminFacade;
 
+@Service
 public class AdminService {
 
     private static AdminService instance;

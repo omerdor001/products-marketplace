@@ -1,8 +1,11 @@
 package com.example.demo.facades;
 
+import org.springframework.stereotype.Component;
+
 import com.example.demo.repositories.Admins_DB_Repository;
 import com.example.demo.repositories.Admins_Memory_Repository;
 
+@Component
 public class AdminFacade {
     private final Admins_DB_Repository dbRepository;
     private final Admins_Memory_Repository memoryRepository;

@@ -2,9 +2,12 @@ package com.example.demo.service;
 
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.example.demo.facades.ProductFacade;
 import com.example.demo.security.JWTTokenValidator;
 
+@Service
 public class PurchaseService {
 
     private static PurchaseService instance;
@@ -13,7 +16,6 @@ public class PurchaseService {
 
     private PurchaseService(ProductFacade productFacade) {
         this.productFacade = productFacade;
-
         String secret = "mySuperSecureSecretKeyThatIsAtLeast32Bytes!";
         tokenValidator = JWTTokenValidator.getInstance(secret, 3600000);
     }

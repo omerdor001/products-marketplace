@@ -3,11 +3,14 @@ package com.example.demo.facades;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.repositories.Products_DB_Repository;
 import com.example.demo.repositories.Products_Memory_Repository;
 
+@Component
 public class ProductFacade {
     private final Products_DB_Repository dbRepository;
     private final Products_Memory_Repository memoryRepository;

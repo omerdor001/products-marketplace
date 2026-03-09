@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 
+@Component
 public class Products_Memory_Repository implements ProductRepository {
     private List<Product> products;
 
