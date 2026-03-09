@@ -3,11 +3,14 @@ package com.example.demo.facades;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.repositories.Products_DB_Repository;
 import com.example.demo.repositories.Products_Memory_Repository;
 
+@Component
 public class ProductFacade {
     private final Products_DB_Repository dbRepository;
     private final Products_Memory_Repository memoryRepository;
@@ -17,10 +20,10 @@ public class ProductFacade {
         this.memoryRepository = memoryRepository;
     }
 
-    public void addCoupon(String name, String description, String imageUrl, double costPrice,
+    public void addCoupon(String username, String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
-        memoryRepository.addCoupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
-        dbRepository.addCoupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        memoryRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        dbRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
     }
 
     public List<Product> getAllProducts() {
@@ -59,24 +62,24 @@ public class ProductFacade {
         return dbRepository.getProductById(productId);
     }
 
-    public void updateCouponCostPrice(UUID productId, double costPrice) {
-        memoryRepository.updateCouponCostPrice(productId, costPrice);
-        dbRepository.updateCouponCostPrice(productId, costPrice);
+    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
+        memoryRepository.updateCouponCostPrice(username, productId, costPrice);
+        dbRepository.updateCouponCostPrice(username, productId, costPrice);
     }
 
-    public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
-        memoryRepository.updateCouponMarginPercentage(productId, marginPercentage);
-        dbRepository.updateCouponMarginPercentage(productId, marginPercentage);
+    public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
+        memoryRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
+        dbRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
     }
 
-    public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
-        memoryRepository.updateCouponValue(productId, valueType, value);
-        dbRepository.updateCouponValue(productId, valueType, value);
+    public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
+        memoryRepository.updateCouponValue(username, productId, valueType, value);
+        dbRepository.updateCouponValue(username, productId, valueType, value);
     }
 
-    public void updateImageURL(UUID productId, String imageUrl) {
-        memoryRepository.updateImageURL(productId, imageUrl);
-        dbRepository.updateImageURL(productId, imageUrl);
+    public void updateImageURL(String username,UUID productId, String imageUrl) {
+        memoryRepository.updateImageURL(username, productId, imageUrl);
+        dbRepository.updateImageURL(username, productId, imageUrl);
     }
 
     public void markAsSold(UUID productId) {
@@ -84,9 +87,9 @@ public class ProductFacade {
         dbRepository.markAsSold(productId);
     }
 
-    public void removeProduct(UUID productId) {
-        memoryRepository.removeProduct(productId);
-        dbRepository.removeProduct(productId);
+    public void removeProduct(String username,UUID productId) {
+        memoryRepository.removeProduct(username, productId);
+        dbRepository.removeProduct(username, productId);
     }
 
     public String purchaseProductByCustomer(UUID productId) {
@@ -97,7 +100,7 @@ public class ProductFacade {
         }
     }
 
-    public String purchaseProductByReseller(UUID productId, double resellerPrice) {
+    public double purchaseProductByReseller(UUID productId, double resellerPrice) {
         try {
             return memoryRepository.purchaseProductByReseller(productId, resellerPrice);
         } catch (Exception e) {

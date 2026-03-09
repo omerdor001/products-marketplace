@@ -29,6 +29,8 @@ class Products_DB_RepositoryTest {
     @Mock
     private JpaCouponRepository dbRepository;
 
+    private final String admin = "admin1";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -39,13 +41,14 @@ class Products_DB_RepositoryTest {
     // ---------- Add ----------
     @Test
     void testAddCoupon() {
-        repository.addCoupon("Name", "Desc", "http://img.com", 10, 20,
-                ValueType.STRING, "100");
+        repository.addCoupon(admin, "Name", "Desc", "http://img.com", 10.0, 20.0, ValueType.STRING, "100");
         ArgumentCaptor<Coupon> captor = ArgumentCaptor.forClass(Coupon.class);
         verify(entityManager).persist(captor.capture());
         Coupon persisted = captor.getValue();
         assertEquals("Name", persisted.getName());
-        assertEquals(10, persisted.getCostPrice());
+        assertEquals(10.0, persisted.getCostPrice());
+        assertEquals(20.0, persisted.getMarginPercentage());
+        assertEquals(ValueType.STRING, persisted.getValueType());
     }
 
     @Test
@@ -80,31 +83,35 @@ class Products_DB_RepositoryTest {
         when(entityManager.createQuery("SELECT p FROM Product p", Product.class)).thenReturn(query);
         List<Product> products = List.of(mock(Product.class), mock(Product.class));
         when(query.getResultList()).thenReturn(products);
-
         List<Product> result = repository.getAllProducts();
         assertEquals(products, result);
     }
 
-    // ---------------- Update Tests ----------------
+    // ---------- Update ----------
+    @Test
+    void testUpdateCouponCostPrice() {
+        UUID id = UUID.randomUUID();
+        Product product = mock(Product.class);
+        when(entityManager.find(Product.class, id)).thenReturn(product);
+        repository.updateCouponCostPrice(admin, id, 50.0);
+        verify(product).setCostPrice(50.0);
+    }
+
+    @Test
+    void testUpdateCouponCostPriceNotFound() {
+        UUID id = UUID.randomUUID();
+        when(entityManager.find(Product.class, id)).thenReturn(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.updateCouponCostPrice(admin, id, 50.0));
+    }
 
     @Test
     void testUpdateCouponMarginPercentage() {
         UUID id = UUID.randomUUID();
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
-
-        repository.updateCouponMarginPercentage(id, 30);
-
+        repository.updateCouponMarginPercentage(admin, id, 30);
         verify(product).setMarginPercentage(30);
-    }
-
-    @Test
-    void testUpdateCouponMarginPercentageNotFound() {
-        UUID id = UUID.randomUUID();
-        when(entityManager.find(Product.class, id)).thenReturn(null);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> repository.updateCouponMarginPercentage(id, 30));
     }
 
     @Test
@@ -112,20 +119,9 @@ class Products_DB_RepositoryTest {
         UUID id = UUID.randomUUID();
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
-
-        repository.updateCouponValue(id, ValueType.STRING, "25");
-
+        repository.updateCouponValue(admin, id, ValueType.STRING, "25");
         verify(product).setValueType(ValueType.STRING);
         verify(product).setValue("25");
-    }
-
-    @Test
-    void testUpdateCouponValueNotFound() {
-        UUID id = UUID.randomUUID();
-        when(entityManager.find(Product.class, id)).thenReturn(null);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> repository.updateCouponValue(id, ValueType.STRING , "25"));
     }
 
     @Test
@@ -133,29 +129,17 @@ class Products_DB_RepositoryTest {
         UUID id = UUID.randomUUID();
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
-
-        repository.updateImageURL(id, "http://example.com/image.jpg");
-
+        repository.updateImageURL(admin, id, "http://example.com/image.jpg");
         verify(product).setImageUrl("http://example.com/image.jpg");
     }
 
-    @Test
-    void testUpdateImageURLNotFound() {
-        UUID id = UUID.randomUUID();
-        when(entityManager.find(Product.class, id)).thenReturn(null);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> repository.updateImageURL(id, "http://example.com/image.jpg"));
-    }
-
+    // ---------- Mark as Sold ----------
     @Test
     void testMarkAsSold() {
         UUID id = UUID.randomUUID();
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
-
         repository.markAsSold(id);
-
         verify(product).setSold(true);
     }
 
@@ -163,7 +147,6 @@ class Products_DB_RepositoryTest {
     void testMarkAsSoldNotFound() {
         UUID id = UUID.randomUUID();
         when(entityManager.find(Product.class, id)).thenReturn(null);
-
         assertThrows(IllegalArgumentException.class,
                 () -> repository.markAsSold(id));
     }
@@ -174,7 +157,7 @@ class Products_DB_RepositoryTest {
         UUID id = UUID.randomUUID();
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
-        repository.removeProduct(id);
+        repository.removeProduct(admin, id);
         verify(entityManager).remove(product);
     }
 
@@ -182,7 +165,8 @@ class Products_DB_RepositoryTest {
     void testRemoveProductNotFound() {
         UUID id = UUID.randomUUID();
         when(entityManager.find(Product.class, id)).thenReturn(null);
-        assertThrows(IllegalArgumentException.class, () -> repository.removeProduct(id));
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.removeProduct(admin, id));
     }
 
     // ---------- Purchase ----------
@@ -193,7 +177,6 @@ class Products_DB_RepositoryTest {
         when(entityManager.find(Product.class, id)).thenReturn(product);
         when(product.isSold()).thenReturn(false);
         when(product.getValue()).thenReturn("VALUE");
-
         String result = repository.purchaseProductByCustomer(id);
         assertEquals("VALUE", result);
         verify(product).setSold(true);
@@ -205,7 +188,8 @@ class Products_DB_RepositoryTest {
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
         when(product.isSold()).thenReturn(true);
-        assertThrows(IllegalStateException.class, () -> repository.purchaseProductByCustomer(id));
+        assertThrows(IllegalStateException.class,
+                () -> repository.purchaseProductByCustomer(id));
     }
 
     @Test
@@ -214,10 +198,8 @@ class Products_DB_RepositoryTest {
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
         when(product.getCostPrice()).thenReturn(100.0);
-        when(product.getValue()).thenReturn("VALUE");
-
-        String result = repository.purchaseProductByReseller(id, 150.0);
-        assertEquals("VALUE", result);
+        double result = repository.purchaseProductByReseller(id, 150.0);
+        assertEquals(150.0, result);
         verify(product).setSold(true);
     }
 
@@ -227,6 +209,7 @@ class Products_DB_RepositoryTest {
         Product product = mock(Product.class);
         when(entityManager.find(Product.class, id)).thenReturn(product);
         when(product.getCostPrice()).thenReturn(100.0);
-        assertThrows(IllegalArgumentException.class, () -> repository.purchaseProductByReseller(id, 50.0));
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.purchaseProductByReseller(id, 50.0));
     }
 }

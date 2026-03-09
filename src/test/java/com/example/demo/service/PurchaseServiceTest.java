@@ -131,46 +131,44 @@ public class PurchaseServiceTest {
     @Test
     void testPurchaseProductByReseller() {
         UUID productId = UUID.randomUUID();
-        String value = "Value1";
         String validJwtToken = JWTTokenValidator.getInstance("testsecretkeytestsecretkey", 3600000).generateTokenForTesting("reseller1");
         when(productFacade.purchaseProductByReseller(productId, 100.0))
-                .thenReturn(value);
-        String result = purchaseService.purchaseProductByReseller(productId, 100.0, validJwtToken);
-        assertEquals(value, result);
+                .thenReturn(100.0);
+        double result = purchaseService.purchaseProductByReseller(productId, 100.0, validJwtToken);
+        assertEquals(100.0, result);
         verify(productFacade).purchaseProductByReseller(productId, 100.0);
     }
 
     @Test
     void testPurchaseProductByReseller_ProductExistsAndNotSoldAndPriceValid() {
         UUID productId = UUID.randomUUID();
-        String value = "Value1";
         String validJwtToken = JWTTokenValidator.getInstance("testsecretkeytestsecretkey", 3600000).generateTokenForTesting("reseller1");
         when(productFacade.purchaseProductByReseller(productId, 100.0))
-                .thenReturn(value);
-        String result = purchaseService.purchaseProductByReseller(productId, 100.0, validJwtToken);
-        assertNotNull(result);
+                .thenReturn(100.0);
+        double result = purchaseService.purchaseProductByReseller(productId, 100.0, validJwtToken);
+        assertEquals(100.0, result);
         verify(productFacade).purchaseProductByReseller(productId, 100.0);
     }
 
     @Test
     void testPurchaseProductByReseller_concurrentAccess() throws InterruptedException, ExecutionException {
         UUID productId = UUID.randomUUID();
-        String value = "Value1";
         String validJwtToken = JWTTokenValidator.getInstance("testsecretkeytestsecretkey", 3600000).generateTokenForTesting("reseller1");
         when(productFacade.purchaseProductByReseller(productId, 15.0))
-                .thenReturn(value)
+                .thenReturn(15.0)
                 .thenThrow(new IllegalStateException("Product is already sold"),
                         new IllegalStateException("Product is already sold"),
                         new IllegalStateException("Product is already sold"),
                         new IllegalStateException("Product is already sold"));
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        List<Future<String>> futures = new ArrayList<>();
+        List<Future<Double>> futures = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             futures.add(executor.submit(() -> {
                 try {
-                    return purchaseService.purchaseProductByReseller(productId, 15.0, validJwtToken);
+                    double price=purchaseService.purchaseProductByReseller(productId, 15.0, validJwtToken);
+                    return price;
                 } catch (IllegalStateException | IllegalArgumentException e) {
-                    return e.getMessage();
+                    return null;
                 }
             }));
         }
@@ -178,12 +176,12 @@ public class PurchaseServiceTest {
         executor.awaitTermination(5, TimeUnit.SECONDS);
         int successCount = 0;
         int soldExceptionCount = 0;
-        for (Future<String> f : futures) {
-            String resultThread = f.get();
-            if ("Value1".equals(resultThread))
-                successCount++;
-            else if ("Product is already sold".equals(resultThread))
+        for (Future<Double> f : futures) {
+            Double resultThread = f.get();
+            if (resultThread == null)
                 soldExceptionCount++;
+            else if (resultThread == 15.0)
+                successCount++;
         }
         assertEquals(1, successCount);
         assertEquals(4, soldExceptionCount);

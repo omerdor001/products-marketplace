@@ -44,4 +44,8 @@ public class Admin {
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
     }
+
+    public void setLogged(boolean logged) {
+        isLogged = logged;
+    }
 }

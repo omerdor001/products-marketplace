@@ -5,18 +5,29 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.example.demo.domain.Coupon.ValueType;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Products")
 public abstract class Product {
+    @JsonView(Views.Public.class)
     @Id
     private UUID id;
 
+    @JsonView(Views.Public.class)
     private String name;
+
+    @JsonView(Views.Public.class)
     private String description;
+
+    @JsonView(Views.Public.class)
     private String imageUrl;
+
+    @JsonView(Views.Admin.class)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @JsonView(Views.Admin.class)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Product() {}

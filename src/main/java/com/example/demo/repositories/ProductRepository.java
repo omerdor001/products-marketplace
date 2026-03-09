@@ -7,7 +7,7 @@ import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 
 public interface ProductRepository {
-    void addCoupon(String name, String description, String imageUrl,
+    void addCoupon(String username ,String name, String description, String imageUrl,
                    double costPrice, double marginPercentage,
                    Coupon.ValueType valueType, String value);
 
@@ -15,13 +15,13 @@ public interface ProductRepository {
     List<Product> getAllProducts();
     Product getProductById(UUID productId);
     List<Product> getAvailableProducts();
-    void updateCouponCostPrice(UUID productId, double costPrice);
-    void updateCouponMarginPercentage(UUID productId, double marginPercentage);
-    void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value);
-    void updateImageURL(UUID productId, String imageUrl);
+    void updateCouponCostPrice(String username ,UUID productId, double costPrice);
+    void updateCouponMarginPercentage(String username ,UUID productId, double marginPercentage);
+    void updateCouponValue(String username ,UUID productId, Coupon.ValueType valueType, String value);
+    void updateImageURL(String username,UUID productId, String imageUrl);
     void markAsSold(UUID productId);
-    void removeProduct(UUID productId);
+    void removeProduct(String username,UUID productId);
     String purchaseProductByCustomer(UUID productId);
-    String purchaseProductByReseller(UUID productId, double resellerPrice);
+    double purchaseProductByReseller(UUID productId, double resellerPrice);
 
 }

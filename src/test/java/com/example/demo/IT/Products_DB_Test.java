@@ -29,6 +29,8 @@ class Products_DB_Test {
 
     private Products_DB_Repository repository;
 
+    private final String admin = "admin1";
+
     @BeforeEach
     void setup() {
         repository = new Products_DB_Repository(jpaRepository);
@@ -39,8 +41,8 @@ class Products_DB_Test {
 
     @Test
     void addCoupon_shouldPersistCoupon() {
-        repository.addCoupon("TestCoupon", "desc", "img",
-                10, 20, Coupon.ValueType.STRING, "VALUE");
+        repository.addCoupon(admin,"TestCoupon", "desc", "img",
+                10.0, 20.0, Coupon.ValueType.STRING, "VALUE");
         List<Product> products = repository.getAllProducts();
         assertEquals(1, products.size());
         assertEquals("TestCoupon", products.get(0).getName());
@@ -50,8 +52,8 @@ class Products_DB_Test {
 
     @Test
     void getAllProducts_shouldReturnAllProducts() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
-        repository.addCoupon("C2", "d", "img", 20, 20, Coupon.ValueType.STRING, "B");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C2", "d", "img", 20.0, 20.0, Coupon.ValueType.STRING, "B");
         List<Product> products = repository.getAllProducts();
         assertEquals(2, products.size());
     }
@@ -60,10 +62,10 @@ class Products_DB_Test {
 
     @Test
     void removeProduct_shouldDeleteProduct() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
         Product product = repository.getAllProducts().get(0);
         UUID id = product.getId();
-        repository.removeProduct(id);
+        repository.removeProduct(admin, id);
         assertTrue(repository.getAllProducts().isEmpty());
     }
 
@@ -71,27 +73,27 @@ class Products_DB_Test {
 
     @Test
     void updateCouponCostPrice_shouldUpdateCost() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
         Product product = repository.getAllProducts().get(0);
-        repository.updateCouponCostPrice(product.getId(), 50);
+        repository.updateCouponCostPrice(admin, product.getId(), 50);
         Product updated = repository.getProductById(product.getId());
         assertEquals(50, updated.getCostPrice());
     }
 
     @Test
     void updateCouponMarginPercentage_shouldUpdateMargin() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
         Product product = repository.getAllProducts().get(0);
-        repository.updateCouponMarginPercentage(product.getId(), 35);
+        repository.updateCouponMarginPercentage(admin, product.getId(), 35);
         Product updated = repository.getProductById(product.getId());
         assertEquals(35, updated.getMarginPercentage());
     }
 
     @Test
     void updateCouponValue_shouldUpdateValue() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.IMAGE, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.IMAGE, "A");
         Product product = repository.getAllProducts().get(0);
-        repository.updateCouponValue(product.getId(),
+        repository.updateCouponValue(admin, product.getId(),
                 Coupon.ValueType.STRING, "30");
         Product updated = repository.getProductById(product.getId());
         assertEquals(Coupon.ValueType.STRING, updated.getValueType());
@@ -100,16 +102,16 @@ class Products_DB_Test {
 
     @Test
     void updateImageURL_shouldUpdateImage() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
         Product product = repository.getAllProducts().get(0);
-        repository.updateImageURL(product.getId(), "newImage");
+        repository.updateImageURL(admin, product.getId(), "newImage");
         Product updated = repository.getProductById(product.getId());
         assertEquals("newImage", updated.getImageUrl());
     }
 
     @Test
     void markAsSold_shouldMarkProductSold() {
-        repository.addCoupon("C1", "d", "img", 10, 10, Coupon.ValueType.STRING, "A");
+        repository.addCoupon(admin,"C1", "d", "img", 10.0, 10.0, Coupon.ValueType.STRING, "A");
         Product product = repository.getAllProducts().get(0);
         repository.markAsSold(product.getId());
         Product updated = repository.getProductById(product.getId());

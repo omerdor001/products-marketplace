@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.demo.facades.AdminFacade;
 
+@Service
 public class AdminService {
 
     private static AdminService instance;
@@ -25,6 +28,10 @@ public class AdminService {
 
     public boolean login(String username, String password) {
         return adminFacade.login(username, password);
+    }
+
+    public boolean logout(String username) {
+        return adminFacade.logout(username);
     }
 
     public void addAdmin(String username, String password) {

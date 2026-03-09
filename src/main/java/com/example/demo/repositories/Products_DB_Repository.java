@@ -32,7 +32,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Add ----------------
 
     @Override
-    public void addCoupon(String name, String description, String imageUrl, double costPrice,
+    public void addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
         Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
         entityManager.persist(coupon);
@@ -68,7 +68,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Update ----------------
 
     @Override
-    public void updateCouponCostPrice(UUID productId, double costPrice) {
+    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
         Product p = entityManager.find(Product.class, productId);
         if (p != null) {
             p.setCostPrice(costPrice);
@@ -78,7 +78,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateCouponMarginPercentage(UUID productId, double marginPercentage) {
+    public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
         Product p = getProductById(productId);
         if (p != null) {
             p.setMarginPercentage(marginPercentage);
@@ -88,7 +88,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateCouponValue(UUID productId, Coupon.ValueType valueType, String value) {
+    public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
         Product p = getProductById(productId);
         if (p != null) {
             p.setValueType(valueType);
@@ -99,7 +99,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
-    public void updateImageURL(UUID productId, String imageUrl) {
+    public void updateImageURL(String username,UUID productId, String imageUrl) {
         Product p = getProductById(productId);
         if (p != null) {
             p.setImageUrl(imageUrl);
@@ -120,7 +120,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Delete ----------------
 
     @Override
-    public void removeProduct(UUID productId) {
+    public void removeProduct(String username,UUID productId) {
         Product product = getProductById(productId);
         if (product == null) {
             throw new IllegalArgumentException("Product not found");
@@ -144,7 +144,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
-    public synchronized String purchaseProductByReseller(UUID productId, double resellerPrice) {
+    public synchronized double purchaseProductByReseller(UUID productId, double resellerPrice) {
         Product product = getProductById(productId);
         if (product == null) {
             throw new IllegalArgumentException("Product not found");
@@ -153,7 +153,7 @@ public class Products_DB_Repository implements ProductRepository {
             throw new IllegalArgumentException("Reseller price cannot be less than cost price");
         }
         product.setSold(true);
-        return product.getValue();
+        return resellerPrice;
     }
 
     // ---------------- Additional helper ----------------
