@@ -15,7 +15,7 @@ import com.example.demo.service.PurchaseService;
 
 @RestController
 @RequestMapping("/api/v1/")
-public class ResellerController {    //change controller tests 
+public class ResellerController {   
 
     private final ProductService productService;
     private final PurchaseService purchaseService;

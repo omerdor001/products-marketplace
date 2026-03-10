@@ -26,7 +26,7 @@ public class CustomerController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getAvailableProducts() {     //change tests
+    public ResponseEntity<List<Product>> getAvailableProducts() {     
         try {
             List<Product> products = productService.getAvailableProducts();
             return ResponseEntity.ok(products);
