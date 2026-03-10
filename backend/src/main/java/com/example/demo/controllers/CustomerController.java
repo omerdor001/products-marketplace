@@ -16,7 +16,7 @@ import com.example.demo.service.PurchaseService;
 
 @RestController
 @RequestMapping("/customer")
-public class CustomerController {
+public class CustomerController {         
     private final ProductService productService;
     private final PurchaseService purchaseService;
 
@@ -26,8 +26,14 @@ public class CustomerController {
     }
 
     @GetMapping("/products")
-    public List<Product> getAvailableProducts() {
-        return productService.getAvailableProducts();
+    public ResponseEntity<List<Product>> getAvailableProducts() {     
+        try {
+            List<Product> products = productService.getAvailableProducts();
+            return ResponseEntity.ok(products);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
 
     @GetMapping("/purchase/{productId}")
