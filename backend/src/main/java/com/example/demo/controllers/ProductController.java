@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @RequestMapping("/products")
-public class ProductController {
+public class ProductController {     //added token support 
 
     private final ProductService productService;
 
