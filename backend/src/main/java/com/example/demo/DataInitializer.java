@@ -1,6 +1,9 @@
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.example.demo.service.AdminService;
+import com.example.demo.service.ProductService;
+import com.example.demo.domain.Coupon;
 
 @Configuration
 public class DataInitializer {

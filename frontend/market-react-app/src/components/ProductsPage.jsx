@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 const URL = "http://localhost:8080";
 
@@ -26,9 +26,12 @@ export default function ProductsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [successProduct, setSuccessProduct] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
+  const [loading, setLoading] = useState(null);
+
 
   useEffect(() => {
-    fetch(`${BASE_URL}/products`)
+    fetch(`${URL}/customer/products`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch products");
         return res.json();
@@ -59,7 +62,7 @@ export default function ProductsPage() {
 
   const handleAdminLogin = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/login`, {
+      const res = await fetch(`${URL}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,7 +90,7 @@ export default function ProductsPage() {
     if (editingProduct.costPrice !== original.costPrice)
       calls.push(
         fetch(
-          `${BASE_URL}/${id}/cost-price?${new URLSearchParams({ username, costPrice: editingProduct.costPrice })}`,
+          `${URL}/products/${id}/cost-price?${new URLSearchParams({ username, costPrice: editingProduct.costPrice })}`,
           { method: "PUT" },
         ),
       );
@@ -95,7 +98,7 @@ export default function ProductsPage() {
     if (editingProduct.marginPercentage !== original.marginPercentage)
       calls.push(
         fetch(
-          `${BASE_URL}/${id}/margin?${new URLSearchParams({ username, marginPercentage: editingProduct.marginPercentage })}`,
+          `${URL}/products/${id}/margin?${new URLSearchParams({ username, marginPercentage: editingProduct.marginPercentage })}`,
           { method: "PUT" },
         ),
       );
@@ -106,7 +109,7 @@ export default function ProductsPage() {
     )
       calls.push(
         fetch(
-          `${BASE_URL}/${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.value })}`,
+          `${URL}//products${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.value })}`,
           { method: "PUT" },
         ),
       );
@@ -114,7 +117,7 @@ export default function ProductsPage() {
     if (editingProduct.image !== original.image)
       calls.push(
         fetch(
-          `${BASE_URL}/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.image })}`,
+          `${URL}/products/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.image })}`,
           { method: "PUT" },
         ),
       );
@@ -146,11 +149,11 @@ export default function ProductsPage() {
         valueType: newProduct.valueType,
         value: newProduct.value,
       });
-      const res = await fetch(`${BASE_URL}/coupon?${params}`, {
+      const res = await fetch(`${URL}/products/coupon?${params}`, {
         method: "POST",
       });
       if (!res.ok) throw new Error(await res.text());
-      const updated = await fetch(`${BASE_URL}/products`);
+      const updated = await fetch(`${URL}/products`);
       setProducts(await updated.json());
       setAddingProduct(false);
       setNewProduct(emptyProduct);
@@ -162,7 +165,7 @@ export default function ProductsPage() {
   const handleDelete = async (id) => {
     try {
       const params = new URLSearchParams({ username: adminForm.username });
-      const res = await fetch(`${BASE_URL}/${id}?${params}`, {
+      const res = await fetch(`${URL}/products/${id}?${params}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error(await res.text());
@@ -176,7 +179,7 @@ export default function ProductsPage() {
 
   const handlePurchase = async (product) => {
     try {
-      const res = await fetch(`${BASE_URL}/purchase/${product.id}`, {
+      const res = await fetch(`${URL}/purchase/${product.id}`, {
         method: "GET",
       });
       if (!res.ok) throw new Error(await res.text());

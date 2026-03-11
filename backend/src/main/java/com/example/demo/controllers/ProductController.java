@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.domain.Views;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {    
 
     private final ProductService productService;
