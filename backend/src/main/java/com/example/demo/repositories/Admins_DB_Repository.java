@@ -27,6 +27,7 @@ public class Admins_DB_Repository implements AdminRepository {
     }
 
     @Override
+    @Transactional
     public void addAdmin(String username, String password) {
         if (username == null || username.trim().isEmpty())
             throw new IllegalArgumentException("Username cannot be null or empty");
@@ -39,6 +40,7 @@ public class Admins_DB_Repository implements AdminRepository {
     }
 
     @Override
+    @Transactional
     public boolean login(String username, String password) {
         if (username == null || username.trim().isEmpty())
             throw new IllegalArgumentException("Username cannot be null or empty");
@@ -54,6 +56,7 @@ public class Admins_DB_Repository implements AdminRepository {
     }
 
     @Override
+    @Transactional
     public boolean logout(String username) {
         if (username == null || username.trim().isEmpty())
             throw new IllegalArgumentException("Username cannot be null or empty");

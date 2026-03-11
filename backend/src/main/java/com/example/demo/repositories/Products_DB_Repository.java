@@ -32,6 +32,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Add ----------------
 
     @Override
+    @Transactional
     public void addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
         Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
@@ -39,6 +40,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public Product saveProduct(Product product) {
         return entityManager.merge(product);
     }
@@ -68,6 +70,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Update ----------------
 
     @Override
+    @Transactional
     public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
         Product p = entityManager.find(Product.class, productId);
         if (p != null) {
@@ -78,6 +81,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -88,6 +92,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -99,6 +104,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateImageURL(String username,UUID productId, String imageUrl) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -109,6 +115,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void markAsSold(UUID productId) {
         Product product = getProductById(productId);
         if (product == null) {
@@ -120,6 +127,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Delete ----------------
 
     @Override
+    @Transactional
     public void removeProduct(String username,UUID productId) {
         Product product = getProductById(productId);
         if (product == null) {

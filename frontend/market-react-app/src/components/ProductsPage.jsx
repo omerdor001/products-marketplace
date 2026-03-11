@@ -70,7 +70,8 @@ export default function ProductsPage() {
           password: adminForm.password,
         }),
       });
-      if (!res.ok) throw new Error();
+      const success = await res.json();
+      if (!res.ok || !success) throw new Error();
       localStorage.setItem("username",adminForm.username);
       setAdminLoggedIn(true);
       setShowAdminModal(false);

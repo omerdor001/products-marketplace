@@ -22,7 +22,7 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Boolean> login(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
         String password = payload.get("password");
         try {
