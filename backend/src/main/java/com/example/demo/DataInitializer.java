@@ -1,3 +1,5 @@
+package com.example.demo.security;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ public class DataInitializer {
     CommandLineRunner initData(AdminService adminService, ProductService productService) {
         return args -> {
             adminService.addAdmin("admin1", "password123");
+            adminService.login("admin1", "password123");
             productService.addCoupon(
                     "admin1",
                     "Amazon Gift Card",
@@ -32,6 +35,7 @@ public class DataInitializer {
                     Coupon.ValueType.STRING,
                     "50"
             );
+            adminService.logout("admin1");
             System.out.println("Initial data loaded successfully.");
         };
     }

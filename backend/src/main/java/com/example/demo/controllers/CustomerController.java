@@ -32,6 +32,7 @@ public class CustomerController {
             List<Product> products = productService.getAvailableProducts();
             return ResponseEntity.ok(products);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
@@ -43,6 +44,7 @@ public class CustomerController {
             String result = purchaseService.purchaseProductByCustomer(productId);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

@@ -15,7 +15,6 @@ import com.example.demo.service.PurchaseService;
 
 @RestController
 @RequestMapping("/api/v1/")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ResellerController {   
 
     private final ProductService productService;
@@ -48,12 +47,14 @@ public class ResellerController {
             return ResponseEntity.ok(products);
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
                             "message", "Unauthorized purchase attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",
@@ -77,18 +78,21 @@ public class ResellerController {
             return ResponseEntity.ok(product);
 
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "error_code", "PRODUCT_NOT_FOUND",
                             "message", "Product not found"));
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
                             "message", "Unauthorized purchase attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",
@@ -117,30 +121,35 @@ public class ResellerController {
                     "value", purchaseService.purchaseProductByReseller(productId, resellerPrice, token));
             return ResponseEntity.ok(result);
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "error_code", "PRODUCT_NOT_FOUND",
                             "message", "Product not found"));
 
         } catch (IllegalStateException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "error_code", "PRODUCT_ALREADY_SOLD",
                             "message", "Product has already been sold"));
 
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
                             "error_code", "RESELLER_PRICE_TOO_LOW",
                             "message", "Reseller price is too low"));
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
                             "message", "Unauthorized purchase attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",

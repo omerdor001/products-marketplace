@@ -8,7 +8,7 @@ const emptyProduct = {
   image: "",
   costPrice: "",
   marginPercentage: "",
-  valueType: "PERCENT",
+  valueType: "STRING",
   value: "",
 };
 
@@ -71,6 +71,7 @@ export default function ProductsPage() {
         }),
       });
       if (!res.ok) throw new Error();
+      localStorage.setItem("username",adminForm.username);
       setAdminLoggedIn(true);
       setShowAdminModal(false);
       setAdminError("");
@@ -82,7 +83,7 @@ export default function ProductsPage() {
 
   const handleSaveEdit = async () => {
     const { id } = editingProduct;
-    const username = adminForm.username;
+    const username = localStorage.getItem("username");
     const calls = [];
 
     const original = products.find((p) => p.id === id);
@@ -668,8 +669,8 @@ export default function ProductsPage() {
                       }))
                     }
                   >
-                    <option value="PERCENT">PERCENT</option>
-                    <option value="FIXED">FIXED</option>
+                    <option value="STRING">STRING</option>
+                    <option value="IMAGE">IMAGE</option>
                   </select>
                 ) : (
                   <input
@@ -749,8 +750,8 @@ export default function ProductsPage() {
                       setNewProduct((p) => ({ ...p, [field]: e.target.value }))
                     }
                   >
-                    <option value="PERCENT">PERCENT</option>
-                    <option value="FIXED">FIXED</option>
+                    <option value="STRING">STRING</option>
+                    <option value="IMAGE">IMAGE</option>
                   </select>
                 ) : (
                   <input

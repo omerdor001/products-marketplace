@@ -29,6 +29,7 @@ public class AdminController {
             adminService.login(username, password);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -40,6 +41,7 @@ public class AdminController {
             adminService.logout(username);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

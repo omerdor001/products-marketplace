@@ -61,7 +61,7 @@ public class Products_DB_Repository implements ProductRepository {
 
     @Override
     public List<Product> getAvailableProducts() {
-        return entityManager.createQuery("SELECT p FROM Product p WHERE p.sold = false", Product.class)
+        return entityManager.createQuery("SELECT p FROM Product p WHERE p.isSold = false", Product.class)
                 .getResultList();
     }
 

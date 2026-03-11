@@ -40,6 +40,7 @@ public class Coupon extends Product {
         super(name, description, imageUrl);
         this.costPrice = costPrice;
         this.marginPercentage = marginPercentage;
+        this.isSold=false;
         this.valueType = valueType;
         this.couponValue = value;
         calculateMinimumSellPrice();
