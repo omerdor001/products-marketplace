@@ -33,16 +33,23 @@ public class Products_DB_Repository implements ProductRepository {
 
     @Override
     @Transactional
-    public void addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
+    public UUID addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
         Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
         entityManager.persist(coupon);
+        return coupon.getId();
     }
 
     @Override
     @Transactional
     public Product saveProduct(Product product) {
         return entityManager.merge(product);
+    }
+
+    @Override
+    public void addCoupon(UUID id,String username ,String name, String description, String imageUrl, double costPrice,
+            double marginPercentage, Coupon.ValueType valueType, String value) {
+        return;
     }
 
     // ---------------- Retrieve ----------------

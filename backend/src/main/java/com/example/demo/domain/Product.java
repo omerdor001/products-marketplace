@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public abstract class Product {
     @JsonView(Views.Public.class)
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @JsonView(Views.Public.class)
@@ -33,7 +34,15 @@ public abstract class Product {
     public Product() {}
 
     public Product(String name, String description, String imageUrl) {
-        this.id = UUID.randomUUID();
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Product(UUID id,String name, String description, String imageUrl) {
+        this.id=id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
