@@ -520,7 +520,6 @@ public class Products_Memory_RepositoryTest {
         int soldExceptionCount = 0;
         for (Future<Double> f : futures) {
             Double result = f.get();
-            System.out.println("Thread " + Thread.currentThread().getName() + " result: " + result);
             if (result==null)
                 soldExceptionCount++; 
             else if (result == 15.0) {
