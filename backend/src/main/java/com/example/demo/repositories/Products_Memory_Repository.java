@@ -1,24 +1,23 @@
 package com.example.demo.repositories;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
-
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component
 public class Products_Memory_Repository implements ProductRepository {
-    private List<Product> products;
 
-    private static Products_Memory_Repository instance;
+    private final Map<UUID, Product> products;  
     private final AdminRepository adminRepository;
 
+    private static Products_Memory_Repository instance;
+
     private Products_Memory_Repository() {
-        products = new ArrayList<>();
-        adminRepository = Admins_Memory_Repository.getInstance();
+        this.products = new ConcurrentHashMap<>();
+        this.adminRepository = Admins_Memory_Repository.getInstance();
     }
 
     public static synchronized Products_Memory_Repository getInstance() {
@@ -28,6 +27,7 @@ public class Products_Memory_Repository implements ProductRepository {
         return instance;
     }
 
+    // For testing purposes only
     public static void resetInstance() {
         instance = null;
     }
@@ -35,223 +35,141 @@ public class Products_Memory_Repository implements ProductRepository {
     // ---------------- Add ----------------
 
     @Override
-    public void addCoupon(String username,String name, String description, String imageUrl, double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
+    public void addCoupon(UUID id,String username, String name, String description, String imageUrl,
+                          double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
+
         if (!adminRepository.isAdminLoggedIn(username)) {
             throw new IllegalArgumentException("Admin not logged in");
         }
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Coupon name cannot be null or empty");
-        }
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Coupon description cannot be null or empty");
-        }
-        if (imageUrl == null || imageUrl.trim().isEmpty()) {
-            throw new IllegalArgumentException("Image URL cannot be null or empty");
-        }
-        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-            throw new IllegalArgumentException("Image URL must start with http:// or https://");
-        }
-        if (costPrice < 0) {
-            throw new IllegalArgumentException("Cost price cannot be negative");
-        }
-        if (marginPercentage < 0 || marginPercentage > 100) {
-            throw new IllegalArgumentException("Margin percentage must be between 0 and 100");
-        }
-        if (valueType == null) {
-            throw new IllegalArgumentException("Value type cannot be null");
-        }
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Coupon value cannot be null or empty");
-        }
-        Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
-        products.add(coupon);
+        Coupon coupon = new Coupon(id,name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        products.put(id, coupon);
     }
 
     @Override
     public Product saveProduct(Product product) {
-        throw new UnsupportedOperationException("Unimplemented method 'saveProduct'");
+        products.put(product.getId(), product);
+        return product;
     }
 
-     // ---------------- Retrieve ----------------
+    @Override
+    public UUID addCoupon(String username, String name, String description, String imageUrl,
+                          double costPrice, double marginPercentage, Coupon.ValueType valueType, String value) {
+
+        return null;
+    }
+
+    // ---------------- Retrieve ----------------
 
     @Override
     public List<Product> getAllProducts() {
-        return new ArrayList<>(products);
+        return new ArrayList<>(products.values());
     }
 
     @Override
     public Product getProductById(UUID productId) {
-        return products.stream()
-                .filter(p -> p.getId().equals(productId))
-                .findFirst()
-                .orElse(null);
+        if (productId == null) return null;
+        return products.get(productId);
     }
 
     @Override
     public List<Product> getAvailableProducts() {
-        List<Product> availableProducts = new ArrayList<>();
-        for (Product product : products) {
+        List<Product> available = new ArrayList<>();
+        for (Product product : products.values()) {
             if (!product.isSold()) {
-                availableProducts.add(product);
+                available.add(product);
             }
         }
-        return availableProducts;
+        System.out.println("Size of availables: "+available.size());
+        return available;
     }
 
     // ---------------- Update ----------------
 
     @Override
-    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
-        if (!adminRepository.isAdminLoggedIn(username)) {
-            throw new IllegalArgumentException("Admin not logged in");
-        }
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if(costPrice < 0) {
-            throw new IllegalArgumentException("Cost price cannot be negative");
-        }
+    public void updateCouponCostPrice(String username, UUID productId, double costPrice) {
+        validateAdmin(username);
+        Product product = getExistingProduct(productId);
+        if (costPrice < 0) throw new IllegalArgumentException("Cost price cannot be negative");
         product.setCostPrice(costPrice);
     }
 
     @Override
     public void updateCouponMarginPercentage(String username, UUID productId, double marginPercentage) {
-        if (!adminRepository.isAdminLoggedIn(username)) {
-            throw new IllegalArgumentException("Admin not logged in");
-        }
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if(marginPercentage < 0 || marginPercentage > 100) {
+        validateAdmin(username);
+        Product product = getExistingProduct(productId);
+        if (marginPercentage < 0 || marginPercentage > 100)
             throw new IllegalArgumentException("Margin percentage must be between 0 and 100");
-        }
         product.setMarginPercentage(marginPercentage);
     }
 
     @Override
     public void updateCouponValue(String username, UUID productId, Coupon.ValueType valueType, String value) {
-        if (!adminRepository.isAdminLoggedIn(username)) {
-            throw new IllegalArgumentException("Admin not logged in");
-        }
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Value cannot be null or empty");
-        }
+        validateAdmin(username);
+        Product product = getExistingProduct(productId);
+        if (value == null || value.trim().isEmpty()) throw new IllegalArgumentException("Value cannot be null or empty");
         product.setValueType(valueType);
         product.setValue(value);
     }
 
     @Override
-    public void updateImageURL(String username,UUID productId, String imageUrl) {
-        if (!adminRepository.isAdminLoggedIn(username)) {
-            throw new IllegalArgumentException("Admin not logged in");
-        }
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if (imageUrl == null || imageUrl.trim().isEmpty()) {
-            throw new IllegalArgumentException("Image URL cannot be null or empty");
-        }
+    public void updateImageURL(String username, UUID productId, String imageUrl) {
+        validateAdmin(username);
+        Product product = getExistingProduct(productId);
+        if (imageUrl == null || imageUrl.trim().isEmpty()) throw new IllegalArgumentException("Image URL cannot be null or empty");
         product.setImageUrl(imageUrl);
     }
 
     @Override
     public void markAsSold(UUID productId) {
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if(product.isSold()) {
-            throw new IllegalStateException("Product is already sold");
-        }
+        Product product = getExistingProduct(productId);
+        if (product.isSold()) throw new IllegalStateException("Product is already sold");
         product.setSold(true);
     }
 
-     // ---------------- Delete ----------------
+    // ---------------- Delete ----------------
 
     @Override
-    public void removeProduct(String username,UUID productId) {
-        if (!adminRepository.isAdminLoggedIn(username)) {
-            throw new IllegalArgumentException("Admin not logged in");
-        }
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if(product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if(!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        products.removeIf(p -> p.getId().equals(productId));
+    public void removeProduct(String username, UUID productId) {
+        validateAdmin(username);
+        Product product = getExistingProduct(productId);
+        products.remove(productId);
     }
 
-     // ---------------- Purchase Logic ----------------
+    // ---------------- Purchase Logic ----------------
 
     @Override
     public synchronized String purchaseProductByCustomer(UUID productId) {
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if (product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if (!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if (product.isSold()) {
-            throw new IllegalStateException("Product is already sold");
-        }
+        Product product = getExistingProduct(productId);
+        if (product.isSold()) throw new IllegalStateException("Product is already sold");
         product.setSold(true);
         return product.getValue();
     }
 
     @Override
     public synchronized double purchaseProductByReseller(UUID productId, double resellerPrice) {
-        if(productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
-        Product product = getProductById(productId);
-        if (product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-        if (!products.contains(product)) {
-            throw new IllegalArgumentException("Product not found in repository");
-        }
-        if (product.isSold()) {
-            throw new IllegalStateException("Product is already sold");
-        }
-        if (resellerPrice < product.getMinimumSellPrice()) {
+        Product product = getExistingProduct(productId);
+        if (product.isSold()) throw new IllegalStateException("Product is already sold");
+        if (resellerPrice < product.getMinimumSellPrice())
             throw new IllegalArgumentException("Reseller price must be at least the minimum sell price");
-        }
         product.setSold(true);
         return resellerPrice;
     }
 
+    // ---------------- Helper Methods ----------------
+
+    public String getValueType(UUID productId){
+        Product product = getExistingProduct(productId);
+        return product.getValueType().name();
+    }
+
+    private void validateAdmin(String username) {
+        if (!adminRepository.isAdminLoggedIn(username))
+            throw new IllegalArgumentException("Admin not logged in");
+    }
+
+    private Product getExistingProduct(UUID productId) {
+        Product product = products.get(productId);
+        if (product == null) throw new IllegalArgumentException("Product not found");
+        return product;
+    }
 }

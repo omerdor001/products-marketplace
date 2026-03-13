@@ -22,8 +22,35 @@ public class ProductFacade {
 
     public void addCoupon(String username, String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
-        memoryRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
-        dbRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Coupon name cannot be null or empty");
+        }
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Coupon description cannot be null or empty");
+        }
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException("Image URL cannot be null or empty");
+        }
+        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            throw new IllegalArgumentException("Image URL must start with http:// or https://");
+        }
+        if (costPrice < 0) {
+            throw new IllegalArgumentException("Cost price cannot be negative");
+        }
+        if (marginPercentage < 0 || marginPercentage > 100) {
+            throw new IllegalArgumentException("Margin percentage must be between 0 and 100");
+        }
+        if (valueType == null) {
+            throw new IllegalArgumentException("Value type cannot be null");
+        }
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Coupon value cannot be null or empty");
+        }
+        UUID productId = dbRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage,
+                valueType, value);
+        memoryRepository.addCoupon(productId, username, name, description, imageUrl, costPrice, marginPercentage,
+                valueType, value);
+
     }
 
     public List<Product> getAllProducts() {
@@ -38,7 +65,7 @@ public class ProductFacade {
         return dbRepository.getAllProducts();
     }
 
-    public List<Product> getAvailableProducts(){
+    public List<Product> getAvailableProducts() {
         try {
             List<Product> memoryProducts = memoryRepository.getAvailableProducts();
             if (memoryProducts != null && !memoryProducts.isEmpty()) {
@@ -62,39 +89,45 @@ public class ProductFacade {
         return dbRepository.getProductById(productId);
     }
 
-    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
-        memoryRepository.updateCouponCostPrice(username, productId, costPrice);
+    public void updateCouponCostPrice(String username, UUID productId, double costPrice) {
         dbRepository.updateCouponCostPrice(username, productId, costPrice);
+        memoryRepository.updateCouponCostPrice(username, productId, costPrice);
     }
 
-    public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
-        memoryRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
+    public void updateCouponMarginPercentage(String username, UUID productId, double marginPercentage) {
         dbRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
+        memoryRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
     }
 
-    public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
-        memoryRepository.updateCouponValue(username, productId, valueType, value);
+    public void updateCouponValue(String username, UUID productId, Coupon.ValueType valueType, String value) {
         dbRepository.updateCouponValue(username, productId, valueType, value);
+        memoryRepository.updateCouponValue(username, productId, valueType, value);
     }
 
-    public void updateImageURL(String username,UUID productId, String imageUrl) {
-        memoryRepository.updateImageURL(username, productId, imageUrl);
+    public void updateImageURL(String username, UUID productId, String imageUrl) {
         dbRepository.updateImageURL(username, productId, imageUrl);
+        memoryRepository.updateImageURL(username, productId, imageUrl);
+    }
+
+    public String getValueType(UUID productId) {
+        return memoryRepository.getValueType(productId);
     }
 
     public void markAsSold(UUID productId) {
-        memoryRepository.markAsSold(productId);
         dbRepository.markAsSold(productId);
+        memoryRepository.markAsSold(productId);
     }
 
-    public void removeProduct(String username,UUID productId) {
-        memoryRepository.removeProduct(username, productId);
+    public void removeProduct(String username, UUID productId) {
         dbRepository.removeProduct(username, productId);
+        memoryRepository.removeProduct(username, productId);
     }
 
     public String purchaseProductByCustomer(UUID productId) {
         try {
-            return memoryRepository.purchaseProductByCustomer(productId);
+            String value = memoryRepository.purchaseProductByCustomer(productId);
+            dbRepository.purchaseProductByCustomer(productId); 
+            return value;
         } catch (Exception e) {
             throw new RuntimeException("Purchase failed. Transaction cancelled.", e);
         }
@@ -102,7 +135,9 @@ public class ProductFacade {
 
     public double purchaseProductByReseller(UUID productId, double resellerPrice) {
         try {
-            return memoryRepository.purchaseProductByReseller(productId, resellerPrice);
+            double price = memoryRepository.purchaseProductByReseller(productId, resellerPrice);
+            dbRepository.purchaseProductByReseller(productId, resellerPrice); 
+            return price;
         } catch (Exception e) {
             throw new RuntimeException("Purchase failed. Transaction cancelled.", e);
         }

@@ -89,6 +89,10 @@ public class ProductService {
         productFacade.updateImageURL(username, productId, imageUrl);
     }
 
+    public String getValueType(UUID productId){
+        return productFacade.getValueType(productId);
+    }
+
     public void markAsSold(UUID productId) {
         productFacade.markAsSold(productId);
     }

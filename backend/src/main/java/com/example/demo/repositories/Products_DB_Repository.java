@@ -32,15 +32,25 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Add ----------------
 
     @Override
-    public void addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
+    @Transactional
+    public UUID addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
         Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        System.out.print("coupon");
         entityManager.persist(coupon);
+        return coupon.getId();
     }
 
     @Override
+    @Transactional
     public Product saveProduct(Product product) {
         return entityManager.merge(product);
+    }
+
+    @Override
+    public void addCoupon(UUID id,String username ,String name, String description, String imageUrl, double costPrice,
+            double marginPercentage, Coupon.ValueType valueType, String value) {
+        return;
     }
 
     // ---------------- Retrieve ----------------
@@ -61,13 +71,14 @@ public class Products_DB_Repository implements ProductRepository {
 
     @Override
     public List<Product> getAvailableProducts() {
-        return entityManager.createQuery("SELECT p FROM Product p WHERE p.sold = false", Product.class)
+        return entityManager.createQuery("SELECT p FROM Product p WHERE p.isSold = false", Product.class)
                 .getResultList();
     }
 
     // ---------------- Update ----------------
 
     @Override
+    @Transactional
     public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
         Product p = entityManager.find(Product.class, productId);
         if (p != null) {
@@ -78,6 +89,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -88,6 +100,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -99,6 +112,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void updateImageURL(String username,UUID productId, String imageUrl) {
         Product p = getProductById(productId);
         if (p != null) {
@@ -109,6 +123,7 @@ public class Products_DB_Repository implements ProductRepository {
     }
 
     @Override
+    @Transactional
     public void markAsSold(UUID productId) {
         Product product = getProductById(productId);
         if (product == null) {
@@ -120,6 +135,7 @@ public class Products_DB_Repository implements ProductRepository {
     // ---------------- Delete ----------------
 
     @Override
+    @Transactional
     public void removeProduct(String username,UUID productId) {
         Product product = getProductById(productId);
         if (product == null) {

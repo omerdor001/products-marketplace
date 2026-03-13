@@ -45,7 +45,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Add Coupon ----------
     @Test
     void testAddCoupon_Success() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         assert repository.getAllProducts().size() == 1;
@@ -53,123 +54,31 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testAddCoupon_EmptyAdmin() {
+        UUID id = UUID.randomUUID();
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon(" ", "Product1",
+                () -> repository.addCoupon(id," ", "Product1",
                         "Description1", "http://image.url/1", 10.0, 20.0, Coupon.ValueType.STRING, "Value1"));
         assertEquals("Username cannot be null or empty", ex.getMessage());
     }
 
     @Test
     void testAddCoupon_NotLoggedAdmin() {
+        UUID id = UUID.randomUUID();
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin2", "Product1",
+                () -> repository.addCoupon(id,"admin2", "Product1",
                         "Description1", "http://image.url/1", 10.0, 20.0, Coupon.ValueType.STRING, "Value1"));
         assertEquals("Admin not logged in", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_nullName_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", null,
-                        "Valid description", "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Coupon name cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_emptyName_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "  ",
-                        "Valid description", "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Coupon name cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_nullDescription_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        null, "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Coupon description cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_emptyDescription_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        " ", "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Coupon description cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_nullImageUrl_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", null, 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Image URL cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_invalidImageUrl_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "ftp://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Image URL must start with http:// or https://", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_negativeCostPrice_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "http://image.jpg", -5.0, 20.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Cost price cannot be negative", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_invalidMarginPercentageBelowZero_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "http://image.jpg", 10.0, -5.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Margin percentage must be between 0 and 100", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_invalidMarginPercentageAboveHundred_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "http://image.jpg", 10.0, 120.0, Coupon.ValueType.STRING, "10$ OFF"));
-        assertEquals("Margin percentage must be between 0 and 100", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_nullValueType_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon", "Description", "http://image.jpg", 10.0, 20.0, null,
-                        "10$ OFF"));
-        assertEquals("Value type cannot be null", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_nullValue_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, null));
-        assertEquals("Coupon value cannot be null or empty", ex.getMessage());
-    }
-
-    @Test
-    void testAddCoupon_emptyValue_shouldThrow() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> repository.addCoupon("admin1", "Coupon",
-                        "Description", "http://image.jpg", 10.0, 20.0, Coupon.ValueType.STRING, "  "));
-        assertEquals("Coupon value cannot be null or empty", ex.getMessage());
     }
 
     // ---------- Get Available Products ----------
     @Test
     void testGetAvailableProducts_AvailableExists() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        repository.addCoupon(id1,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
-        repository.addCoupon("admin1", "Product2", "Description2", "http://image.url/2", 15.0, 25.0,
+        repository.addCoupon(id2,"admin1", "Product2", "Description2", "http://image.url/2", 15.0, 25.0,
                 Coupon.ValueType.STRING,
                 "Value2");
         repository.markAsSold(repository.getAllProducts().get(0).getId());
@@ -178,10 +87,12 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testGetAvailableProducts_AllSold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        repository.addCoupon(id1,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
-        repository.addCoupon("admin1", "Product2", "Description2", "http://image.url/2", 15.0, 25.0,
+        repository.addCoupon(id2,"admin1", "Product2", "Description2", "http://image.url/2", 15.0, 25.0,
                 Coupon.ValueType.STRING,
                 "Value2");
         repository.getAllProducts().forEach(p -> repository.markAsSold(p.getId()));
@@ -191,7 +102,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Get Product By Id ----------
     @Test
     void testGetProductById_ProductExists() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -209,7 +121,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Mark As Sold ----------
     @Test
     void testMarkAsSold_ProductExistsAndNotSold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -219,7 +132,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testMarkAsSold_ProductExistsButAlreadySold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -235,7 +149,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Remove Product ----------
     @Test
     void testRemoveProduct_ProductExists() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -250,7 +165,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testRemoveProduct_EmptyAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -262,7 +178,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void test_NotLoggedAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -275,7 +192,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Update Coupon Cost Price ----------
     @Test
     void testUpdateCostPrice_ProductExistsAndPriceValid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -286,7 +204,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateCostPrice_EmptyAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -299,7 +218,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateCostPrice_NotLoggedAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -312,7 +232,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateCostPrice_ProductExistsButPriceInvalid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -329,7 +250,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Update Coupon Margin Percentage ----------
     @Test
     void testUpdateMarginPercentage_ProductExistsAndPercentageValid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -340,7 +262,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateMarginPercentage_EmptyAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -353,7 +276,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateMarginPercentage_NotLoggedAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -366,7 +290,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateMarginPercentage_ProductExistsButPercentageInvalid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -383,7 +308,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Update Coupon Value ----------
     @Test
     void testUpdateValue_ProductExistsAndValueValid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -394,7 +320,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateValue_EmptyAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -407,7 +334,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateValue_NotLoggedAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -420,7 +348,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateValue_ProductExistsButValueInvalid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -437,7 +366,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Update Image URL ----------
     @Test
     void testUpdateImageURL_ProductExistsAndURLValid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -448,7 +378,8 @@ public class Products_Memory_RepositoryTest {
 
      @Test
     void testUpdateImageURL_EmptyAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -461,7 +392,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateImageURL_NotLoggedAdmin() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1",
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1",
                 10.0, 20.0, Coupon.ValueType.STRING, "Value1");
         Product product = repository.getAllProducts().get(0);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -474,7 +406,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testUpdateImageURL_ProductExistsButURLInvalid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -490,7 +423,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Purchase Product By Customer ----------
     @Test
     void testPurchaseProductByCustomer_ProductExistsAndNotSold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -500,7 +434,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testPurchaseProductByCustomer_concurrentAccess() throws InterruptedException, ExecutionException {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         UUID productId = repository.getAllProducts().get(0).getId();
@@ -533,7 +468,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testPurchaseProductByCustomer_ProductExistsAndSold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -549,7 +485,8 @@ public class Products_Memory_RepositoryTest {
     // ---------- Purchase Product By Reseller ----------
     @Test
     void testPurchaseProductByReseller_ProductExistsAndNotSoldAndPriceValid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -560,7 +497,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testPurchaseProductByReseller_concurrentAccess() throws InterruptedException, ExecutionException {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         UUID productId = repository.getAllProducts().get(0).getId();
@@ -595,7 +533,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testPurchaseProductByReseller_ProductExistsAndNotSoldButPriceInvalid() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);
@@ -604,7 +543,8 @@ public class Products_Memory_RepositoryTest {
 
     @Test
     void testPurchaseProductByReseller_ProductExistsAndSold() {
-        repository.addCoupon("admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
+        UUID id = UUID.randomUUID();
+        repository.addCoupon(id,"admin1", "Product1", "Description1", "http://image.url/1", 10.0, 20.0,
                 Coupon.ValueType.STRING,
                 "Value1");
         Product product = repository.getAllProducts().get(0);

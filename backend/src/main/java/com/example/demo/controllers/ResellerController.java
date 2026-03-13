@@ -8,10 +8,11 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.demo.domain.Product;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.PurchaseService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.example.demo.domain.Views;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -32,6 +33,7 @@ public class ResellerController {
         return authHeader.replace("Bearer ", "");
     }
 
+    @JsonView(Views.Public.class)
     @GetMapping("products")
     public ResponseEntity<?> getAvailableProducts(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -47,12 +49,14 @@ public class ResellerController {
             return ResponseEntity.ok(products);
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
-                            "message", "Unauthorized purchase attempt"));
+                            "message", "Unauthorized getting products attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",
@@ -76,18 +80,21 @@ public class ResellerController {
             return ResponseEntity.ok(product);
 
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "error_code", "PRODUCT_NOT_FOUND",
                             "message", "Product not found"));
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
                             "message", "Unauthorized purchase attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",
@@ -112,34 +119,39 @@ public class ResellerController {
             Map<String, Object> result = Map.of(
                     "product_id", productId,
                     "final_price", resellerPrice,
-                    "value_type", "STRING",
+                    "value_type", productService.getValueType(productId),   
                     "value", purchaseService.purchaseProductByReseller(productId, resellerPrice, token));
             return ResponseEntity.ok(result);
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "error_code", "PRODUCT_NOT_FOUND",
                             "message", "Product not found"));
 
         } catch (IllegalStateException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "error_code", "PRODUCT_ALREADY_SOLD",
                             "message", "Product has already been sold"));
 
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
                             "error_code", "RESELLER_PRICE_TOO_LOW",
                             "message", "Reseller price is too low"));
 
         } catch (SecurityException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
                             "message", "Unauthorized purchase attempt"));
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error_code", "INTERNAL_ERROR",

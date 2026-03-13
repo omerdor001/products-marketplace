@@ -7,10 +7,12 @@ import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 
 public interface ProductRepository {
-    void addCoupon(String username ,String name, String description, String imageUrl,
+    void addCoupon(UUID id,String username ,String name, String description, String imageUrl,
                    double costPrice, double marginPercentage,
                    Coupon.ValueType valueType, String value);
-
+    UUID addCoupon(String username ,String name, String description, String imageUrl,
+                   double costPrice, double marginPercentage,
+                   Coupon.ValueType valueType, String value);
     Product saveProduct(Product product); 
     List<Product> getAllProducts();
     Product getProductById(UUID productId);

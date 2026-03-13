@@ -49,6 +49,7 @@ public class Admins_Memory_Repository implements AdminRepository {
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty");
         }
+        System.out.println(admins.size());
         for (Admin admin : admins) {
             if (admin.getUsername().equals(username) && admin.getEncryptedPassword().equals(password)) {
                 admin.setLogged(true);
@@ -63,7 +64,7 @@ public class Admins_Memory_Repository implements AdminRepository {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
         for (Admin admin : admins) {
-            if (admin.getUsername().equals(username) && admin.isLogged()) {
+            if(isAdminLoggedIn(username)) {
                 admin.setLogged(false);
                 return true;
             }
@@ -72,11 +73,20 @@ public class Admins_Memory_Repository implements AdminRepository {
     }
 
     public boolean isAdminLoggedIn(String username) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
-        }
-        return admins.stream()
-                .anyMatch(admin -> admin.getUsername().equals(username) && admin.isLogged());
+    if (username == null || username.trim().isEmpty()) {
+        throw new IllegalArgumentException("Username cannot be null or empty");
     }
+    return admins.stream()
+            .filter(admin -> admin.getUsername().equals(username))
+            .findFirst() 
+            .map(admin -> {
+                System.out.println("User found: " + admin.getUsername() + " | Logged in: " + admin.isLogged());
+                return admin.isLogged(); 
+            })
+            .orElseGet(() -> {
+                System.out.println("User not found: " + username);
+                return false;
+            });
+}
 
 }

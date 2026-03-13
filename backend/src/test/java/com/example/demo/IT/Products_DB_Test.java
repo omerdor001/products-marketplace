@@ -34,17 +34,18 @@ class Products_DB_Test {
     @BeforeEach
     void setup() {
         repository = new Products_DB_Repository(jpaRepository);
-        repository.setEntityManager(entityManager); 
+        repository.setEntityManager(entityManager);
     }
 
     // ---------------- Add ----------------
 
     @Test
     void addCoupon_shouldPersistCoupon() {
-        repository.addCoupon(admin,"TestCoupon", "desc", "img",
+        UUID id = repository.addCoupon(admin, "TestCoupon", "desc", "img",
                 10.0, 20.0, Coupon.ValueType.STRING, "VALUE");
         List<Product> products = repository.getAllProducts();
         assertEquals(1, products.size());
+        assertEquals(id, products.get(0).getId());
         assertEquals("TestCoupon", products.get(0).getName());
     }
 
@@ -66,7 +67,8 @@ class Products_DB_Test {
         Product product = repository.getAllProducts().get(0);
         UUID id = product.getId();
         repository.removeProduct(admin, id);
-        assertTrue(repository.getAllProducts().isEmpty());
+        List<Product> products = repository.getAllProducts();
+        assertTrue(products.isEmpty());
     }
 
     // ---------------- Updates ----------------
@@ -77,7 +79,7 @@ class Products_DB_Test {
         Product product = repository.getAllProducts().get(0);
         repository.updateCouponCostPrice(admin, product.getId(), 50);
         Product updated = repository.getProductById(product.getId());
-        assertEquals(50, updated.getCostPrice());
+        assertEquals(50, updated.getCostPrice(), 0.001);
     }
 
     @Test
@@ -86,7 +88,7 @@ class Products_DB_Test {
         Product product = repository.getAllProducts().get(0);
         repository.updateCouponMarginPercentage(admin, product.getId(), 35);
         Product updated = repository.getProductById(product.getId());
-        assertEquals(35, updated.getMarginPercentage());
+        assertEquals(35, updated.getMarginPercentage(), 0.001);
     }
 
     @Test
@@ -108,6 +110,8 @@ class Products_DB_Test {
         Product updated = repository.getProductById(product.getId());
         assertEquals("newImage", updated.getImageUrl());
     }
+
+    // ---------------- Sold ----------------
 
     @Test
     void markAsSold_shouldMarkProductSold() {

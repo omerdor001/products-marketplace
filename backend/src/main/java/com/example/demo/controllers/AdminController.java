@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.demo.service.AdminService;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
     private final AdminService adminService;
 
@@ -20,14 +22,15 @@ public class AdminController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Boolean> login(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
         String password = payload.get("password");
         try {
             adminService.login(username, password);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(true);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
@@ -38,6 +41,7 @@ public class AdminController {
             adminService.logout(username);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

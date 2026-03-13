@@ -1,9 +1,10 @@
 package com.example.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonView;
-
+import java.util.UUID;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Coupons")
@@ -21,6 +22,7 @@ public class Coupon extends Product {
     private double marginPercentage;
 
     @JsonView(Views.Public.class)
+    @JsonProperty("price")
     private double minimumSellPrice;
 
     @JsonView(Views.Admin.class)
@@ -40,6 +42,17 @@ public class Coupon extends Product {
         super(name, description, imageUrl);
         this.costPrice = costPrice;
         this.marginPercentage = marginPercentage;
+        this.isSold=false;
+        this.valueType = valueType;
+        this.couponValue = value;
+        calculateMinimumSellPrice();
+    }
+
+    public Coupon(UUID id,String name, String description, String imageUrl, double costPrice, double marginPercentage, ValueType valueType, String value) {
+        super(id,name, description, imageUrl);
+        this.costPrice = costPrice;
+        this.marginPercentage = marginPercentage;
+        this.isSold=false;
         this.valueType = valueType;
         this.couponValue = value;
         calculateMinimumSellPrice();

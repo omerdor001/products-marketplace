@@ -3,7 +3,7 @@ package com.example.demo.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.example.demo.domain.Coupon.ValueType;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public abstract class Product {
     @JsonView(Views.Public.class)
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @JsonView(Views.Public.class)
@@ -22,6 +23,7 @@ public abstract class Product {
     private String description;
 
     @JsonView(Views.Public.class)
+    @JsonProperty("image_url")
     private String imageUrl;
 
     @JsonView(Views.Admin.class)
@@ -33,7 +35,15 @@ public abstract class Product {
     public Product() {}
 
     public Product(String name, String description, String imageUrl) {
-        this.id = UUID.randomUUID();
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Product(UUID id,String name, String description, String imageUrl) {
+        this.id=id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;

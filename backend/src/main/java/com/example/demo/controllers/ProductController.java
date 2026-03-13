@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.domain.Views;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {    
 
     private final ProductService productService;
@@ -31,6 +32,7 @@ public class ProductController {
                     costPrice, marginPercentage, valueType, value);
             return ResponseEntity.ok("Coupon added successfully");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -42,28 +44,31 @@ public class ProductController {
             productService.removeProduct(username, productId);
             return ResponseEntity.ok("Product removed successfully");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Admin.class)
     @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
             List<Product> products = productService.getAllProducts();
             return ResponseEntity.ok(products);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @JsonView(Views.Admin.class)
+    @JsonView(Views.Public.class)
     @GetMapping("/availables")
     public ResponseEntity<List<Product>> getAvailableProducts() {
         try {
             List<Product> products = productService.getAvailableProducts();
             return ResponseEntity.ok(products);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -74,6 +79,7 @@ public class ProductController {
             productService.updateCouponCostPrice(username, productId, costPrice);
             return ResponseEntity.ok("Cost price updated");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -84,6 +90,7 @@ public class ProductController {
             productService.updateCouponMarginPercentage(username, productId, marginPercentage);
             return ResponseEntity.ok("Margin percentage updated");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -94,6 +101,7 @@ public class ProductController {
             productService.updateCouponValue(username, productId, valueType, value);
             return ResponseEntity.ok("Coupon value updated");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -106,6 +114,7 @@ public class ProductController {
             productService.updateImageURL(username, productId, imageUrl);
             return ResponseEntity.ok("Image URL updated");
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
