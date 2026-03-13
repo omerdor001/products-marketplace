@@ -59,7 +59,7 @@ public class Reseller_Controller_Tests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].name").value("Name"))
-                .andExpect(jsonPath("$[1].costPrice").value(15.0));
+                .andExpect(jsonPath("$[1].description").value("Desc 2"));
         verify(productService).getAvailableProducts(token);
     }
 
@@ -101,7 +101,7 @@ public class Reseller_Controller_Tests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Name"))
-                .andExpect(jsonPath("$.costPrice").value(10.0));
+                .andExpect(jsonPath("$.description").value("Desc"));
         verify(productService).getProductById(productId, token);
     }
 
@@ -135,6 +135,7 @@ public class Reseller_Controller_Tests {
     void purchaseProduct_ShouldReturnSuccess() throws Exception {
         String token = generateToken();
         UUID productId = UUID.randomUUID();
+        when(productService.getValueType(productId)).thenReturn(Coupon.ValueType.STRING.toString());
         when(purchaseService.purchaseProductByReseller(productId, 50.0, token))
                 .thenReturn(100.0);
         mockMvc.perform(post("/api/v1/products/" + productId + "/purchase")
