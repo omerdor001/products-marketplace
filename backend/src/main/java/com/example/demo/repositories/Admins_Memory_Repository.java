@@ -80,11 +80,9 @@ public class Admins_Memory_Repository implements AdminRepository {
             .filter(admin -> admin.getUsername().equals(username))
             .findFirst() 
             .map(admin -> {
-                System.out.println("User found: " + admin.getUsername() + " | Logged in: " + admin.isLogged());
                 return admin.isLogged(); 
             })
             .orElseGet(() -> {
-                System.out.println("User not found: " + username);
                 return false;
             });
 }

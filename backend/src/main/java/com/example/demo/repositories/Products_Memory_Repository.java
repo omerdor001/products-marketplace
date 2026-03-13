@@ -79,7 +79,6 @@ public class Products_Memory_Repository implements ProductRepository {
                 available.add(product);
             }
         }
-        System.out.println("Size of availables: "+available.size());
         return available;
     }
 
