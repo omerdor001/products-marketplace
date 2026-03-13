@@ -46,9 +46,11 @@ public class ProductFacade {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("Coupon value cannot be null or empty");
         }
-        UUID productId=dbRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
-        memoryRepository.addCoupon(productId,username, name, description, imageUrl, costPrice, marginPercentage, valueType, value);
-       
+        UUID productId = dbRepository.addCoupon(username, name, description, imageUrl, costPrice, marginPercentage,
+                valueType, value);
+        memoryRepository.addCoupon(productId, username, name, description, imageUrl, costPrice, marginPercentage,
+                valueType, value);
+
     }
 
     public List<Product> getAllProducts() {
@@ -63,7 +65,7 @@ public class ProductFacade {
         return dbRepository.getAllProducts();
     }
 
-    public List<Product> getAvailableProducts(){
+    public List<Product> getAvailableProducts() {
         try {
             List<Product> memoryProducts = memoryRepository.getAvailableProducts();
             if (memoryProducts != null && !memoryProducts.isEmpty()) {
@@ -87,27 +89,27 @@ public class ProductFacade {
         return dbRepository.getProductById(productId);
     }
 
-    public void updateCouponCostPrice(String username,UUID productId, double costPrice) {
+    public void updateCouponCostPrice(String username, UUID productId, double costPrice) {
         dbRepository.updateCouponCostPrice(username, productId, costPrice);
         memoryRepository.updateCouponCostPrice(username, productId, costPrice);
     }
 
-    public void updateCouponMarginPercentage(String username,UUID productId, double marginPercentage) {
+    public void updateCouponMarginPercentage(String username, UUID productId, double marginPercentage) {
         dbRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
         memoryRepository.updateCouponMarginPercentage(username, productId, marginPercentage);
     }
 
-    public void updateCouponValue(String username,UUID productId, Coupon.ValueType valueType, String value) {
+    public void updateCouponValue(String username, UUID productId, Coupon.ValueType valueType, String value) {
         dbRepository.updateCouponValue(username, productId, valueType, value);
-        memoryRepository.updateCouponValue(username, productId, valueType, value);   
+        memoryRepository.updateCouponValue(username, productId, valueType, value);
     }
 
-    public void updateImageURL(String username,UUID productId, String imageUrl) {
+    public void updateImageURL(String username, UUID productId, String imageUrl) {
         dbRepository.updateImageURL(username, productId, imageUrl);
         memoryRepository.updateImageURL(username, productId, imageUrl);
     }
 
-    public String getValueType(UUID productId){
+    public String getValueType(UUID productId) {
         return memoryRepository.getValueType(productId);
     }
 
@@ -116,14 +118,16 @@ public class ProductFacade {
         memoryRepository.markAsSold(productId);
     }
 
-    public void removeProduct(String username,UUID productId) {
+    public void removeProduct(String username, UUID productId) {
         dbRepository.removeProduct(username, productId);
-        memoryRepository.removeProduct(username, productId);  
+        memoryRepository.removeProduct(username, productId);
     }
 
     public String purchaseProductByCustomer(UUID productId) {
         try {
-            return memoryRepository.purchaseProductByCustomer(productId);
+            String value = memoryRepository.purchaseProductByCustomer(productId);
+            dbRepository.purchaseProductByCustomer(productId); 
+            return value;
         } catch (Exception e) {
             throw new RuntimeException("Purchase failed. Transaction cancelled.", e);
         }
@@ -131,7 +135,9 @@ public class ProductFacade {
 
     public double purchaseProductByReseller(UUID productId, double resellerPrice) {
         try {
-            return memoryRepository.purchaseProductByReseller(productId, resellerPrice);
+            double price = memoryRepository.purchaseProductByReseller(productId, resellerPrice);
+            dbRepository.purchaseProductByReseller(productId, resellerPrice); 
+            return price;
         } catch (Exception e) {
             throw new RuntimeException("Purchase failed. Transaction cancelled.", e);
         }
