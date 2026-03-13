@@ -36,6 +36,7 @@ public class Products_DB_Repository implements ProductRepository {
     public UUID addCoupon(String username ,String name, String description, String imageUrl, double costPrice,
             double marginPercentage, Coupon.ValueType valueType, String value) {
         Coupon coupon = new Coupon(name, description, imageUrl, costPrice, marginPercentage, valueType, value);
+        System.out.print("coupon");
         entityManager.persist(coupon);
         return coupon.getId();
     }

@@ -5,7 +5,7 @@ const URL = "http://localhost:8080";
 const emptyProduct = {
   name: "",
   description: "",
-  image: "",
+  imageUrl: "",
   costPrice: "",
   marginPercentage: "",
   valueType: "STRING",
@@ -27,7 +27,7 @@ export default function ProductsPage() {
   const [editMode, setEditMode] = useState(false);
   const [successProduct, setSuccessProduct] = useState(null);
   const [fetchError, setFetchError] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
@@ -86,7 +86,6 @@ export default function ProductsPage() {
     const { id } = editingProduct;
     const username = localStorage.getItem("username");
     const calls = [];
-
     const original = products.find((p) => p.id === id);
 
     if (editingProduct.costPrice !== original.costPrice)
@@ -111,15 +110,15 @@ export default function ProductsPage() {
     )
       calls.push(
         fetch(
-          `${URL}//products${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.value })}`,
+          `${URL}/products/${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.value })}`,
           { method: "PUT" },
         ),
       );
 
-    if (editingProduct.image !== original.image)
+    if (editingProduct.imageUrl !== original.imageUrl)
       calls.push(
         fetch(
-          `${URL}/products/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.image })}`,
+          `${URL}/products/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.imageUrl })}`,
           { method: "PUT" },
         ),
       );
@@ -139,13 +138,14 @@ export default function ProductsPage() {
   };
 
   const handleAddProduct = async () => {
-    if (!newProduct.name || !newProduct.price) return;
+    const username = localStorage.getItem("username");
+    if (!newProduct.name || !newProduct.costPrice) return;
     try {
       const params = new URLSearchParams({
-        username: adminForm.username,
+        username: username,
         name: newProduct.name,
         description: newProduct.description,
-        imageUrl: newProduct.image,
+        imageUrl: newProduct.imageUrl,
         costPrice: newProduct.costPrice,
         marginPercentage: newProduct.marginPercentage,
         valueType: newProduct.valueType,
@@ -155,8 +155,9 @@ export default function ProductsPage() {
         method: "POST",
       });
       if (!res.ok) throw new Error(await res.text());
-      const updated = await fetch(`${URL}/products`);
-      setProducts(await updated.json());
+      const updated = await fetch(`${URL}/customer/products`);
+      const data = await updated.json();
+      setProducts(Array.isArray(data) ? data : data.content ?? data.products ?? []);
       setAddingProduct(false);
       setNewProduct(emptyProduct);
     } catch (err) {
@@ -165,8 +166,9 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id) => {
+    const username = localStorage.getItem("username");
     try {
-      const params = new URLSearchParams({ username: adminForm.username });
+      const params = new URLSearchParams({ username: username });
       const res = await fetch(`${URL}/products/${id}?${params}`, {
         method: "DELETE",
       });
@@ -181,13 +183,15 @@ export default function ProductsPage() {
 
   const handlePurchase = async (product) => {
     try {
-      const res = await fetch(`${URL}/purchase/${product.id}`, {
+      const res = await fetch(`${URL}/customer/purchase/${product.id}`, {
         method: "GET",
       });
       if (!res.ok) throw new Error(await res.text());
-
       setSuccessProduct(product);
       setTimeout(() => setSuccessProduct(null), 3000);
+      const updated = await fetch(`${URL}/customer/products`);
+      const data = await updated.json();
+      setProducts(Array.isArray(data) ? data : data.content ?? data.products ?? []);
     } catch (err) {
       alert("Purchase failed: " + err.message);
     }
@@ -408,7 +412,7 @@ export default function ProductsPage() {
               {editMode && (
                 <div
                   style={{
-                    padding: "10px 12px",
+                    padding: "10px 12px ",
                     background: "#fffbeb",
                     borderRadius: "9px",
                     border: "1px solid #fde68a",
@@ -461,11 +465,11 @@ export default function ProductsPage() {
                   style={{ position: "relative" }}
                 >
                   <div className="img-wrap">
-                    <img src={product.image} alt={product.name} />
+                    <img src={product.imageUrl} alt={product.name} />
                   </div>
                   <div
                     style={{
-                      padding: "20px 24px",
+                      padding: "20px 100px 20px 30px",
                       flex: 1,
                       display: "flex",
                       flexDirection: "column",
@@ -500,7 +504,7 @@ export default function ProductsPage() {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        ${product.price}
+                        ${product.costPrice}
                       </span>
                     </div>
                     <p
@@ -655,7 +659,7 @@ export default function ProductsPage() {
               ["marginPercentage", "Margin %", "number"],
               ["valueType", "Value Type", "select"],
               ["value", "Value", "text"],
-              ["image", "Image URL", "text"],
+              ["imageUrl", "Image URL", "text"],
             ].map(([field, label, type]) => (
               <div key={field} style={{ marginBottom: "14px" }}>
                 <label className="field-label">{label}</label>
@@ -725,7 +729,7 @@ export default function ProductsPage() {
             {[
               ["name", "Name", "text"],
               ["description", "Description", "textarea"],
-              ["image", "Image URL", "text"],
+              ["imageUrl", "Image URL", "text"],
               ["costPrice", "Cost Price", "number"],
               ["marginPercentage", "Margin %", "number"],
               ["valueType", "Value Type", "select"],

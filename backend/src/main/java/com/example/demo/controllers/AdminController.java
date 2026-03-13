@@ -27,10 +27,10 @@ public class AdminController {
         String password = payload.get("password");
         try {
             adminService.login(username, password);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(true);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
