@@ -46,23 +46,22 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
    ```
 
 3. **Run the backend**
-   
+
    Make sure you have Docker installed and start the PostgreSQL container:
 
    ```bash
    docker-compose up --build
    ```
 
+   Backend will run at `http://localhost:8080`.
+
 4. **Stop the backend and Docker containers**
-   
+
    Stop the backend process (Ctrl+C if running in terminal) and then stop Docker containers:
 
    ```bash
    docker-compose down
    ```
-   
-
-Backend will run at `http://localhost:8080`.
 
 ---
 
@@ -85,9 +84,10 @@ Backend will run at `http://localhost:8080`.
    ```bash
    npm run dev
    ```
+
 4. Stop the frontend server: Press Ctrl+C in the terminal where it's running.
 
-Frontend will run at `http://localhost:http://localhost:5173/`.
+Frontend will run at `http://localhost:5173/`.
 
 ---
 
@@ -106,7 +106,5 @@ The frontend communicates with the backend API to perform all operations.
 ### Backend
 
 ```bash
-mvnw test
+./mvnw test
 ```
-
-
