@@ -107,6 +107,10 @@ public class ProductFacade {
         memoryRepository.updateImageURL(username, productId, imageUrl);
     }
 
+    public String getValueType(UUID productId){
+        return memoryRepository.getValueType(productId);
+    }
+
     public void markAsSold(UUID productId) {
         dbRepository.markAsSold(productId);
         memoryRepository.markAsSold(productId);

@@ -3,7 +3,7 @@ package com.example.demo.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.example.demo.domain.Coupon.ValueType;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -23,6 +23,7 @@ public abstract class Product {
     private String description;
 
     @JsonView(Views.Public.class)
+    @JsonProperty("image_url")
     private String imageUrl;
 
     @JsonView(Views.Admin.class)

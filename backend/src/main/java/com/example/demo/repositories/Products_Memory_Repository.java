@@ -156,6 +156,11 @@ public class Products_Memory_Repository implements ProductRepository {
 
     // ---------------- Helper Methods ----------------
 
+    public String getValueType(UUID productId){
+        Product product = getExistingProduct(productId);
+        return product.getValueType().name();
+    }
+
     private void validateAdmin(String username) {
         if (!adminRepository.isAdminLoggedIn(username))
             throw new IllegalArgumentException("Admin not logged in");

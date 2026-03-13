@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.domain.Product;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.PurchaseService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.example.demo.domain.Views;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -31,6 +33,7 @@ public class ResellerController {
         return authHeader.replace("Bearer ", "");
     }
 
+    @JsonView(Views.Public.class)
     @GetMapping("products")
     public ResponseEntity<?> getAvailableProducts(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -50,7 +53,7 @@ public class ResellerController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "error_code", "UNAUTHORIZED",
-                            "message", "Unauthorized purchase attempt"));
+                            "message", "Unauthorized getting products attempt"));
 
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -116,7 +119,7 @@ public class ResellerController {
             Map<String, Object> result = Map.of(
                     "product_id", productId,
                     "final_price", resellerPrice,
-                    "value_type", "STRING",
+                    "value_type", productService.getValueType(productId),   
                     "value", purchaseService.purchaseProductByReseller(productId, resellerPrice, token));
             return ResponseEntity.ok(result);
         } catch (NoSuchElementException e) {

@@ -49,7 +49,7 @@ public class ProductController {
         }
     }
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Admin.class)
     @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
@@ -61,7 +61,7 @@ public class ProductController {
         }
     }
 
-    @JsonView(Views.Admin.class)
+    @JsonView(Views.Public.class)
     @GetMapping("/availables")
     public ResponseEntity<List<Product>> getAvailableProducts() {
         try {

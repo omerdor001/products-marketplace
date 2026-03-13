@@ -23,7 +23,7 @@ public class DataInitializer {
                     80.0,
                     20.0,
                     Coupon.ValueType.STRING,
-                    "100"
+                    "DEF-456"
             );
             productService.addCoupon(
                     "admin1",
@@ -33,7 +33,7 @@ public class DataInitializer {
                     40.0,
                     25.0,
                     Coupon.ValueType.STRING,
-                    "50"
+                    "ABC-123"
             );
             adminService.logout("admin1");
             System.out.println("Initial data loaded successfully.");
