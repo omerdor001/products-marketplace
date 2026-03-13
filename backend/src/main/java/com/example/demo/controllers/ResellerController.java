@@ -64,6 +64,7 @@ public class ResellerController {
         }
     }
 
+    @JsonView(Views.Public.class)
     @GetMapping("products/{productId}")
     public ResponseEntity<?> getProductById(
             @PathVariable UUID productId,
