@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import com.example.demo.domain.Coupon;
 import com.example.demo.domain.Product;
 import com.example.demo.domain.Views;
@@ -24,6 +24,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @JsonView(Views.Public.class)
     @PostMapping("/coupon")
     public ResponseEntity<String> addCoupon(@RequestParam String username, @RequestParam String name, @RequestParam String description, @RequestParam String imageUrl,
             @RequestParam double costPrice, @RequestParam double marginPercentage, @RequestParam Coupon.ValueType valueType, @RequestParam String value) {
@@ -73,6 +74,7 @@ public class ProductController {
         }
     }
 
+    @JsonView(Views.Public.class)
     @PutMapping("/{productId}/cost-price")
     public ResponseEntity<String> updateCouponCostPrice(@RequestParam String username, @PathVariable UUID productId, @RequestParam double costPrice) {
         try {
@@ -106,6 +108,7 @@ public class ProductController {
         }
     }
 
+    @JsonView(Views.Public.class)
     @PutMapping("/{productId}/image-url")
     public ResponseEntity<String> updateImageURL(@RequestParam String username,
             @PathVariable UUID productId,
