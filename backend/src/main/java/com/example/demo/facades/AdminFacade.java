@@ -22,9 +22,7 @@ public class AdminFacade {
 
     public boolean login(String username, String password) {
         boolean memoryLogin = memoryRepository.login(username, password);
-        System.out.println("Memory "+memoryLogin);
         boolean dbLogin = dbRepository.login(username, password);
-        System.out.println("DB "+dbLogin);
         return dbLogin && memoryLogin;
     }
 

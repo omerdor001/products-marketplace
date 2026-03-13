@@ -26,8 +26,8 @@ public class AdminController {
         String username = payload.get("username");
         String password = payload.get("password");
         try {
-            adminService.login(username, password);
-            return ResponseEntity.ok(true);
+            boolean res=adminService.login(username, password);
+            return ResponseEntity.ok(res);
         } catch (RuntimeException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);

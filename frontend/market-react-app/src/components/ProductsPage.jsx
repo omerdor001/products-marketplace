@@ -5,11 +5,12 @@ const URL = "http://localhost:8080";
 const emptyProduct = {
   name: "",
   description: "",
-  imageUrl: "",
-  costPrice: "",
+  image_url: "",
+  price: "",         
+  costPrice: "",       
   marginPercentage: "",
   valueType: "STRING",
-  value: "",
+  couponValue: "",
 };
 
 export default function ProductsPage() {
@@ -30,21 +31,13 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
 
 
-  useEffect(() => {
-    fetch(`${URL}/customer/products`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch products");
-        return res.json();
-      })
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setLoading(false);
-      });
-  }, []);
+ useEffect(() => {
+  const endpoint = adminLoggedIn ? `${URL}/products/all` : `${URL}/customer/products`;
+  fetch(endpoint)
+    .then(res => { if (!res.ok) throw new Error("Failed to fetch products"); return res.json(); })
+    .then(data => { setProducts(Array.isArray(data) ? data : []); setLoading(false); })
+    .catch(err => { setFetchError(err.message); setLoading(false); });
+}, [adminLoggedIn]);
 
   const filtered = products
     .filter(
@@ -71,6 +64,7 @@ export default function ProductsPage() {
         }),
       });
       const success = await res.json();
+      console.log(success);
       if (!res.ok || !success) throw new Error();
       localStorage.setItem("username",adminForm.username);
       setAdminLoggedIn(true);
@@ -105,57 +99,56 @@ export default function ProductsPage() {
       );
 
     if (
-      editingProduct.value !== original.value ||
+      editingProduct.couponValue !== original.couponValue ||
       editingProduct.valueType !== original.valueType
     )
       calls.push(
         fetch(
-          `${URL}/products/${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.value })}`,
+          `${URL}/products/${id}/value?${new URLSearchParams({ username, valueType: editingProduct.valueType, value: editingProduct.couponValue })}`,
           { method: "PUT" },
         ),
       );
 
-    if (editingProduct.imageUrl !== original.imageUrl)
+    if (editingProduct.image_url !== original.image_url)
       calls.push(
         fetch(
-          `${URL}/products/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.imageUrl })}`,
+          `${URL}/products/${id}/image-url?${new URLSearchParams({ username, imageUrl: editingProduct.image_url })}`,
           { method: "PUT" },
         ),
       );
 
     try {
-      const results = await Promise.all(calls);
-      const failed = results.find((r) => !r.ok);
-      if (failed) throw new Error(await failed.text());
-
-      setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...editingProduct } : p)),
-      );
-      setEditingProduct(null);
-    } catch (err) {
-      alert("Failed to update product: " + err.message);
-    }
+  const results = await Promise.all(calls);
+  const failed = results.find((r) => !r.ok);
+  if (failed) throw new Error(await failed.text());
+  const updated = await fetch(`${URL}/products/all`);
+  const data = await updated.json();
+  setProducts(Array.isArray(data) ? data : []);
+  setEditingProduct(null);
+} catch (err) {
+  alert("Failed to update product: " + err.message);
+}
   };
 
   const handleAddProduct = async () => {
     const username = localStorage.getItem("username");
-    if (!newProduct.name || !newProduct.costPrice) return;
+    if (!newProduct.name || !newProduct.price) return;
     try {
       const params = new URLSearchParams({
         username: username,
         name: newProduct.name,
         description: newProduct.description,
-        imageUrl: newProduct.imageUrl,
+        imageUrl: newProduct.image_url,
         costPrice: newProduct.costPrice,
         marginPercentage: newProduct.marginPercentage,
         valueType: newProduct.valueType,
-        value: newProduct.value,
+        value: newProduct.couponValue,
       });
       const res = await fetch(`${URL}/products/coupon?${params}`, {
         method: "POST",
       });
       if (!res.ok) throw new Error(await res.text());
-      const updated = await fetch(`${URL}/customer/products`);
+      const updated = await fetch(adminLoggedIn ? `${URL}/products/all` : `${URL}/customer/products`);
       const data = await updated.json();
       setProducts(Array.isArray(data) ? data : data.content ?? data.products ?? []);
       setAddingProduct(false);
@@ -343,29 +336,36 @@ export default function ProductsPage() {
             Management
           </p>
           {!adminLoggedIn ? (
-            <button
-              className="side-btn"
-              onClick={() => setShowAdminModal(true)}
-              style={{ background: "#1a1614", color: "#fff" }}
-            >
-              🔐 Admin Login
-            </button>
-          ) : (
-            <button
-              className="side-btn"
-              onClick={() => {
-                setAdminLoggedIn(false);
-                setEditMode(false);
-              }}
-              style={{
-                background: "#fee2e2",
-                color: "#dc2626",
-                borderColor: "#fca5a5",
-              }}
-            >
-              🚪 Logout
-            </button>
-          )}
+  <button
+    className="side-btn"
+    onClick={() => setShowAdminModal(true)}
+    style={{ background: "#1a1614", color: "#fff" }}
+  >
+    🔐 Admin Login
+  </button>
+) : (
+  <button
+    className="side-btn"
+    onClick={async () => {
+      try {
+        await fetch(`${URL}/admin/logout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: localStorage.getItem("username") }),
+        });
+      } catch (err) {
+        console.error("Logout failed:", err);
+      } finally {
+        setAdminLoggedIn(false);
+        setEditMode(false);
+        localStorage.removeItem("username");
+      }
+    }}
+    style={{ background: "#fee2e2", color: "#dc2626", borderColor: "#fca5a5" }}
+  >
+    🚪 Logout
+  </button>
+)}
           {adminLoggedIn && (
             <>
               <button
@@ -465,7 +465,10 @@ export default function ProductsPage() {
                   style={{ position: "relative" }}
                 >
                   <div className="img-wrap">
-                    <img src={product.imageUrl} alt={product.name} />
+                   <img
+  src={product.image_url}
+  alt={product.name}
+/>
                   </div>
                   <div
                     style={{
@@ -477,36 +480,43 @@ export default function ProductsPage() {
                       gap: "8px",
                     }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        gap: "12px",
-                      }}
-                    >
-                      <h3
-                        style={{
-                          fontFamily: "'Playfair Display', serif",
-                          fontSize: "18px",
-                          fontWeight: 600,
-                          color: "#1a1614",
-                        }}
-                      >
-                        {product.name}
-                      </h3>
-                      <span
-                        style={{
-                          fontFamily: "'Playfair Display', serif",
-                          fontSize: "22px",
-                          fontWeight: 700,
-                          color: "#1a1614",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        ${product.costPrice}
-                      </span>
-                    </div>
+                   <div
+  style={{
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: "12px",
+  }}
+>
+  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+    <h3
+      style={{
+        fontFamily: "'Playfair Display', serif",
+        fontSize: "18px",
+        fontWeight: 600,
+        color: "#1a1614",
+      }}
+    >
+      {product.name}
+    </h3>
+    {adminLoggedIn && product.sold && (
+      <span style={{ background: "#fee2e2", color: "#dc2626", fontSize: "11px", fontWeight: 600, padding: "2px 10px", borderRadius: "50px", whiteSpace: "nowrap" }}>
+        SOLD
+      </span>
+    )}
+  </div>
+  <span
+    style={{
+      fontFamily: "'Playfair Display', serif",
+      fontSize: "22px",
+      fontWeight: 700,
+      color: "#1a1614",
+      whiteSpace: "nowrap",
+    }}
+  >
+    ${product.price}
+  </span>
+</div>
                     <p
                       style={{
                         fontSize: "14px",
@@ -658,8 +668,8 @@ export default function ProductsPage() {
               ["costPrice", "Cost Price", "number"],
               ["marginPercentage", "Margin %", "number"],
               ["valueType", "Value Type", "select"],
-              ["value", "Value", "text"],
-              ["imageUrl", "Image URL", "text"],
+              ["couponValue", "Value", "text"],
+              ["image_url", "Image URL", "text"],
             ].map(([field, label, type]) => (
               <div key={field} style={{ marginBottom: "14px" }}>
                 <label className="field-label">{label}</label>
@@ -729,11 +739,11 @@ export default function ProductsPage() {
             {[
               ["name", "Name", "text"],
               ["description", "Description", "textarea"],
-              ["imageUrl", "Image URL", "text"],
-              ["costPrice", "Cost Price", "number"],
+              ["image_url", "Image URL", "text"],
+              ["costPrice", "Cost Price", "number"],,
               ["marginPercentage", "Margin %", "number"],
               ["valueType", "Value Type", "select"],
-              ["value", "Value", "text"],
+              ["couponValue", "Value", "text"],
             ].map(([field, label, type]) => (
               <div key={field} style={{ marginBottom: "14px" }}>
                 <label className="field-label">{label}</label>
