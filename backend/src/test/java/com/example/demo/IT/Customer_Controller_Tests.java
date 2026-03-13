@@ -46,7 +46,7 @@ class Customer_Controller_Tests {
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(2))
                                 .andExpect(jsonPath("$[0].name").value("Name"))
-                                .andExpect(jsonPath("$[1].costPrice").value(15.0));
+                                .andExpect(jsonPath("$[1].price").value(18.75));
                 verify(productService).getAvailableProducts();
         }
 

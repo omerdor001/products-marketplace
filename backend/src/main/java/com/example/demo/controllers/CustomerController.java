@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.demo.domain.Product;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.PurchaseService;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.example.demo.domain.Views;
 
 @RestController
 @RequestMapping("/customer")
@@ -26,6 +28,7 @@ public class CustomerController {
         this.purchaseService = purchaseService;
     }
 
+    @JsonView(Views.Public.class)
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getAvailableProducts() {     
         try {
