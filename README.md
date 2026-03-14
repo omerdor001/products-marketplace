@@ -43,9 +43,9 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
    spring.datasource.password=postgres
    ```
 
-3. **Run the backend**
+3. **Run the whole system**
 
-   Make sure you have Docker installed and start the PostgreSQL container:
+   Make sure you have Docker installed start the PostgreSQL container, backend container and frontend container:
 
    ```bash
    docker-compose up --build
@@ -55,9 +55,9 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
    Frontend will run at `http://localhost:5173`.
 
    
-5. **Stop the backend and Docker containers**
+5. **Stop Docker containers**
 
-   Stop the backend process (Ctrl+C if running in terminal) and then stop Docker containers:
+   Stop the backend and Frontend process (Ctrl+C if running in terminal) and then stop Docker containers:
 
    ```bash
    docker-compose down
