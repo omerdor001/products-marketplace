@@ -87,7 +87,7 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
 
 4. Stop the frontend server: Press Ctrl+C in the terminal where it's running.
 
-Frontend will run at `http://localhost:5173/`.
+Frontend will run at `http://localhost:5173`.
 
 ---
 
