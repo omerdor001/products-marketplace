@@ -64,7 +64,6 @@ export default function ProductsPage() {
         }),
       });
       const success = await res.json();
-      console.log(success);
       if (!res.ok || !success) throw new Error();
       localStorage.setItem("username",adminForm.username);
       setAdminLoggedIn(true);
@@ -132,7 +131,7 @@ export default function ProductsPage() {
 
   const handleAddProduct = async () => {
     const username = localStorage.getItem("username");
-    if (!newProduct.name || !newProduct.price) return;
+    if (!newProduct.name || !newProduct.costPrice) return;
     try {
       const params = new URLSearchParams({
         username: username,
@@ -514,7 +513,7 @@ export default function ProductsPage() {
       whiteSpace: "nowrap",
     }}
   >
-    ${product.price}
+    ${parseFloat(parseFloat(product.price).toFixed(2))}
   </span>
 </div>
                     <p
@@ -740,7 +739,7 @@ export default function ProductsPage() {
               ["name", "Name", "text"],
               ["description", "Description", "textarea"],
               ["image_url", "Image URL", "text"],
-              ["costPrice", "Cost Price", "number"],,
+              ["costPrice", "Cost Price", "number"],
               ["marginPercentage", "Margin %", "number"],
               ["valueType", "Value Type", "select"],
               ["couponValue", "Value", "text"],
