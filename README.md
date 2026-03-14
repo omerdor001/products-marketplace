@@ -45,7 +45,7 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
 
 3. **Run the whole system**
 
-   Make sure you have Docker installed start the PostgreSQL container, backend container and frontend container:
+   Make sure you have Docker installed start the PostgreSQL container, Backend container and Frontend container:
 
    ```bash
    docker-compose up --build
