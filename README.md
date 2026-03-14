@@ -27,13 +27,11 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
 
 ## Installation
 
-### Backend
-
 1. **Clone the repository**
 
    ```bash
    git clone https://github.com/omerdor001/products-marketplace.git
-   cd products-marketplace/backend
+   cd products-marketplace
    ```
 
 2. **Configure PostgreSQL** in `application.properties`:
@@ -54,40 +52,16 @@ A **Full-Stack Products Marketplace** application that allows users to browse, b
    ```
 
    Backend will run at `http://localhost:8080`.
+   Frontend will run at `http://localhost:5173`.
 
-4. **Stop the backend and Docker containers**
+   
+5. **Stop the backend and Docker containers**
 
    Stop the backend process (Ctrl+C if running in terminal) and then stop Docker containers:
 
    ```bash
    docker-compose down
    ```
-
----
-
-### Frontend
-
-1. Navigate to the frontend folder:
-
-   ```bash
-   cd ../frontend/market-react-app
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the frontend server:
-
-   ```bash
-   npm run dev
-   ```
-
-4. Stop the frontend server: Press Ctrl+C in the terminal where it's running.
-
-Frontend will run at `http://localhost:5173`.
 
 ---
 
